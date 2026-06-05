@@ -408,7 +408,16 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+<script>
+  // 貼入您個人的 Firebase 雲端資料庫連線金鑰
+  window.__firebase_config = `{
+  apiKey: "AIzaSyDHUJBsTjFiT4kAgfowQtdDw9bPt0AEVSQ",
+  authDomain: "mouse-massage-lab.firebaseapp.com",
+  projectId: "mouse-massage-lab",
+  storageBucket: "mouse-massage-lab.firebasestorage.app",
+  messagingSenderId: "200662761238",
+  appId: "1:200662761238:web:78047d84a58095bfe0da37"  }`;
+</script>
         // 全域變態變數宣告（支援多用戶雲端綁定）
         let auth, db, user = null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'mouse-massage-sim';
