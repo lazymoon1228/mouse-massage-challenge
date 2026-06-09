@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JoVE 文獻互動挑戰：小鼠腹部按摩定量模擬器</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=PingFang+TC:wght@400;600;700&display=swap');
@@ -30,13 +32,11 @@
             -webkit-user-select: none;
             user-select: none;
         }
-        #tapArea {
-            touch-action: manipulation;
-        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-orange-500 selection:text-white no-select">
 
+    <!-- Header -->
     <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-4 py-2.5">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5">
@@ -45,7 +45,7 @@
                 </div>
                 <div>
                     <h1 class="text-sm md:text-lg font-bold text-slate-100 tracking-wide leading-tight">小鼠腹部按摩定量挑戰</h1>
-                    [cite_start]<p class="text-[10px] text-slate-400">JoVE (2025) e68226 · 方法標準化研究[cite: 1]</p>
+                    <p class="text-[10px] text-slate-400">JoVE (2025) e68226 · 方法標準化研究[cite: 1]</p>
                 </div>
             </div>
             <div class="flex items-center gap-1.5">
@@ -56,10 +56,13 @@
         </div>
     </header>
 
+    <!-- Main Dashboard Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-3 py-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
         
+        <!-- Simulator Console (7/12) -->
         <section class="lg:col-span-7 flex flex-col gap-4">
             
+            <!-- Game Controller Card -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-3">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-1.5">
@@ -68,6 +71,7 @@
                         </span>
                         <h2 class="text-xs md:text-sm font-bold text-slate-100">干預操作區</h2>
                     </div>
+                    <!-- Score & Timer -->
                     <div class="flex items-center gap-3">
                         <div class="text-right">
                             <div class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">剩餘時間</div>
@@ -80,7 +84,9 @@
                     </div>
                 </div>
 
+                <!-- 頂部即時儀表看板 -->
                 <div class="grid grid-cols-2 gap-3 bg-slate-950 p-2.5 border border-slate-800/60 rounded-xl">
+                    <!-- Pressure Gauge -->
                     <div class="flex flex-col gap-0.5">
                         <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
                             <span>FPS 操作壓力</span>
@@ -95,6 +101,7 @@
                             <div class="absolute left-[20%] top-0 bottom-0 w-[40%] bg-emerald-500/20 border-l border-r border-emerald-400/40"></div>
                         </div>
                     </div>
+                    <!-- Frequency BPM Gauge -->
                     <div class="flex flex-col gap-0.5">
                         <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
                             <span>即時按摩頻率</span>
@@ -111,8 +118,10 @@
                     </div>
                 </div>
 
+                <!-- Simulation Interactive Area -->
                 <div class="relative bg-slate-950 border border-slate-800/80 rounded-xl p-4 h-64 flex flex-col items-center justify-center overflow-hidden">
                     
+                    <!-- Mouse Graphic Box -->
                     <div id="mousePlate" class="relative w-full max-w-[260px] h-36 flex items-center justify-center transform scale-95 md:scale-100 transition-all">
                         <div class="absolute w-full h-28 border-2 border-slate-700/60 bg-slate-900/30 rounded-lg transform skew-x-2 shadow-inner flex items-center justify-center">
                             <div id="fabricPlate" class="absolute w-[80%] h-20 bg-pink-500/20 border border-pink-500/30 rounded-full transition-colors duration-300"></div>
@@ -141,14 +150,17 @@
                         </div>
                     </div>
 
-                    <div id="tapArea" class="absolute inset-0 cursor-pointer z-30 flex items-center justify-center">
-                        <div id="rippleRing" class="absolute w-16 h-16 rounded-full border border-orange-500/0 scale-50 opacity-0 pointer-events-none transition-all duration-300"></div>
+                    <!-- 【優化】核心觸控與滑鼠感應層 -->
+                    <div id="tapArea" class="absolute inset-0 cursor-pointer z-30 flex items-center justify-center bg-transparent">
+                        <div id="rippleRing" class="absolute w-16 h-16 rounded-full border border-orange-500/0 scale-50 opacity-0 pointer-events-none"></div>
                     </div>
 
+                    <!-- Alert Banner -->
                     <div id="ambientWarning" class="absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 pointer-events-none">
                         規律輕點/觸控小鼠腹部靶區開始操作
                     </div>
 
+                    <!-- Results Screen -->
                     <div id="resultsScreen" class="absolute inset-0 bg-slate-950/98 z-40 flex flex-col items-center justify-center gap-3 transition-all duration-300 translate-y-full px-4">
                         <div class="text-center">
                             <div class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">評估報告</div>
@@ -170,6 +182,7 @@
                             </div>
                         </div>
                         
+                        <!-- Submission Area -->
                         <div id="submissionArea" class="w-full max-w-xs flex flex-col gap-2 px-2">
                             <div class="flex gap-2">
                                 <input id="playerNameInput" type="text" maxlength="10" placeholder="輸入研究員代號..." class="flex-1 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-100 text-center focus:outline-none focus:border-orange-500">
@@ -191,6 +204,7 @@
                 </div>
             </div>
 
+            <!-- Waveform Monitor -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-2">
                 <div class="text-xs font-bold text-slate-100">FPS 感測系統即時波形圖</div>
                 <div class="bg-slate-950 rounded-lg p-1.5 border border-slate-800">
@@ -199,17 +213,19 @@
             </div>
         </section>
 
+        <!-- Right Column -->
         <section class="lg:col-span-5 flex flex-col gap-4">
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-3 flex-1">
                 <div class="flex border-b border-slate-800 text-xs">
                     <button id="tabMechanismBtn" class="flex-1 pb-2.5 font-bold text-orange-400 border-b-2 border-orange-500 focus:outline-none">
                         <i class="fa-solid fa-dna mr-1"></i>分子機制
                     </button>
-                    <button id="tabLeaderboardBtn" class="flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all focus:outline-none">
+                    <button id="tabLeaderboardBtn" class="flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 focus:outline-none">
                         <i class="fa-solid fa-trophy mr-1"></i>實驗室排行榜
                     </button>
                 </div>
 
+                <!-- Content 1: Mechanism -->
                 <div id="tabMechanism" class="flex flex-col gap-3 flex-1">
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] text-slate-400 font-semibold">通路狀態</span>
@@ -243,6 +259,7 @@
                     </div>
                 </div>
 
+                <!-- Content 2: Leaderboard -->
                 <div id="tabLeaderboard" class="hidden flex flex-col gap-2 flex-1">
                     <div class="flex items-center justify-between text-[10px] text-slate-400">
                         <span>實驗室即時同步數據</span>
@@ -256,6 +273,7 @@
         </section>
     </main>
 
+    <!-- Help Modal -->
     <div id="helpModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
         <div class="bg-slate-900 border border-slate-800 rounded-xl max-w-sm w-full p-5 shadow-2xl flex flex-col gap-3 transform scale-95 transition-transform duration-300">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -263,37 +281,42 @@
                 <button id="closeHelpBtn" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="text-[11px] text-slate-300 space-y-2 leading-relaxed">
-                [cite_start]<p>本挑戰依據 <strong>JoVE (2025) e68226</strong> 論文開發[cite: 1]。</p>
+                <p>本挑戰依據 <strong>JoVE (2025) e68226</strong> 論文開發[cite: 1]。</p>
                 <p class="font-semibold text-orange-400">【操作指引】</p>
                 <ul class="list-disc list-inside space-y-1 bg-slate-950 p-2 rounded border border-slate-800">
-                    [cite_start]<li>滑鼠點擊或手指輕點小鼠肚子（神闕穴周圍）[cite: 1]。</li>
-                    <li>設備經防重疊校正。<strong>請以約每秒 2 次的速度穩定點擊</strong>。</li>
-                    [cite_start]<li>使壓力（0.1-0.3）與頻率（100-120）同時維持在標準區間以通關[cite: 1]。</li>
+                    <li>滑鼠點擊或手指輕點小鼠肚子（神闕穴周圍）[cite: 1]。</li>
+                    <li><strong>以每秒約 2 下的速度規律連續輕點</strong>，壓力就會維持，不需要死按著不放。</li>
+                    <li>使壓力（0.1-0.3）與頻率（100-120）同時維持在標準區間以通關[cite: 1]。</li>
                 </ul>
             </div>
             <button id="startPlayBtn" class="w-full py-2 rounded-lg bg-orange-600 hover:bg-orange-500 font-semibold text-xs text-white">開始挑戰</button>
         </div>
     </div>
 
+    <!-- Alert Toast -->
     <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 transition-all duration-300 px-3 py-2 rounded-lg bg-slate-900 border text-[11px] flex items-center gap-1.5 shadow-xl pointer-events-none">
         <i id="toastIcon" class="fa-solid"></i><span id="toastText"></span>
     </div>
 
+    <!-- 🌟 將前端操控腳本與雲端腳本完全隔離獨立，防止加載崩潰 🌟 -->
     <script>
-        // 全域本機緩存備用數據
+        // 全域核心狀態（優先讓本機玩）
         window.localLeaderboard = JSON.parse(localStorage.getItem('mouse_massage_local_board')) || [
             { name: "SOP-BOT_01", score: 92.5, avgPressure: 0.20, avgBPM: 110, timestamp: Date.now() - 3600000 },
             { name: "SOP-BOT_02", score: 81.2, avgPressure: 0.17, avgBPM: 105, timestamp: Date.now() - 7200000 },
             { name: "助理阿明", score: 65.4, avgPressure: 0.14, avgBPM: 98, timestamp: Date.now() - 10800000 }
         ];
+        
         window.cloudSubmitHandler = null; 
         window.cloudFetchHandler = null;
+        window.cloudMode = false;
     </script>
 
+    <!-- Firebase 加載隔離沙盒 (Try-Catch) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const myFirebaseConfig = {
             apiKey: "AIzaSyDHUJBsTjFiT4kAgfowQtdDw9bPtOAEVSQ",
@@ -304,6 +327,19 @@
             appId: "1:200662761238:web:78047d84a58095bfe0da37"
         };
 
+        // 若 Firebase 驗證或 Firestore 權限延遲/失敗，3 秒後自動顯示本機模式，不影響遊戲本體。
+        const firebaseFallbackTimer = setTimeout(() => {
+            if (!window.cloudFetchHandler || !window.cloudSubmitHandler) {
+                const syncStatus = document.getElementById('syncStatus');
+                if(syncStatus) {
+                    syncStatus.innerHTML = '<i class="fa-solid fa-cloud-slash text-amber-500"></i>本機暫存模式';
+                    syncStatus.className = "text-[9px] text-amber-500 flex items-center gap-1";
+                }
+                if(window.updateLeaderboardUI) window.updateLeaderboardUI(window.localLeaderboard);
+            }
+        }, 3000);
+
+        // 🌟 核心防禦：完全包裹在 try 中，就算失敗也絕對不會卡死本機操作 🌟
         try {
             const app = initializeApp(myFirebaseConfig);
             const auth = getAuth(app);
@@ -312,39 +348,59 @@
             signInAnonymously(auth).then(() => {
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
+                        clearTimeout(firebaseFallbackTimer);
                         const syncStatus = document.getElementById('syncStatus');
                         if(syncStatus) {
                             syncStatus.innerHTML = '<i class="fa-solid fa-cloud text-emerald-400"></i>已即時雲端同步';
                             syncStatus.className = "text-[9px] text-emerald-400 flex items-center gap-1";
                         }
                         
-                        // 🚀 【最新修復】路徑對齊 mouse-massage-lab 專案
+                        // 註冊全域資料庫處理函式
+                        window.cloudMode = true;
+                        const leaderboardCol = collection(db, 'artifacts', 'mouse-massage-sim', 'public', 'data', 'leaderboard');
+
                         window.cloudFetchHandler = async function() {
-                            const leaderboardCol = collection(db, 'artifacts', 'mouse-massage-lab', 'public', 'data', 'leaderboard');
-                            const snapshot = await getDocs(leaderboardCol);
+                            const q = query(leaderboardCol, orderBy('score', 'desc'), limit(30));
+                            const snapshot = await getDocs(q);
                             const cloudList = [];
                             snapshot.forEach(doc => cloudList.push(doc.data()));
-                            cloudList.sort((a, b) => b.score - a.score);
                             return cloudList;
                         };
 
                         window.cloudSubmitHandler = async function(record) {
-                            const leaderboardCol = collection(db, 'artifacts', 'mouse-massage-lab', 'public', 'data', 'leaderboard');
-                            await addDoc(leaderboardCol, record);
+                            const cleanRecord = {
+                                name: String(record.name || "匿名研究員").slice(0, 10),
+                                score: Number(record.score) || 0,
+                                avgPressure: Number(record.avgPressure) || 0,
+                                avgBPM: Number(record.avgBPM) || 0,
+                                timestamp: Date.now()
+                            };
+                            await addDoc(leaderboardCol, cleanRecord);
                         };
 
-                        window.cloudFetchHandler().then(list => {
-                            if(window.updateLeaderboardUI) window.updateLeaderboardUI(list);
-                        }).catch(e => console.error("雲端讀取失敗:", e));
+                        // 即時監聽排行榜：多人手機開啟時可同步刷新
+                        const q = query(leaderboardCol, orderBy('score', 'desc'), limit(30));
+                        onSnapshot(q, (snapshot) => {
+                            const cloudList = [];
+                            snapshot.forEach(doc => cloudList.push(doc.data()));
+                            if(window.updateLeaderboardUI) window.updateLeaderboardUI(cloudList);
+                        }, (error) => {
+                            console.error("雲端即時監聽失敗:", error);
+                            const syncStatus = document.getElementById('syncStatus');
+                            if(syncStatus) {
+                                syncStatus.innerHTML = '<i class="fa-solid fa-cloud-slash text-amber-500"></i>雲端權限失敗｜本機模式';
+                                syncStatus.className = "text-[9px] text-amber-500 flex items-center gap-1";
+                            }
+                            if(window.updateLeaderboardUI) window.updateLeaderboardUI(window.localLeaderboard);
+                        });
                     }
                 });
-            }).catch(e => { console.warn("Firebase 匿名驗證失效"); fallbackActive(); });
+            }).catch(e => {
+                throw new Error("匿名驗證遭拒絕");
+            });
 
         } catch (err) {
-            fallbackActive();
-        }
-
-        function fallbackActive() {
+            console.warn("[Firebase 沙盒隔離安全防護啟動] 轉為本機完全解鎖模式:", err);
             setTimeout(() => {
                 const syncStatus = document.getElementById('syncStatus');
                 if(syncStatus) {
@@ -352,10 +408,11 @@
                     syncStatus.className = "text-[9px] text-amber-500 flex items-center gap-1";
                 }
                 if(window.updateLeaderboardUI) window.updateLeaderboardUI(window.localLeaderboard);
-            }, 400);
+            }, 500);
         }
     </script>
 
+    <!-- 遊戲主體操控指令碼 (100% 獨立運行，滑鼠點擊絕對不卡死) -->
     <script>
         const GAME_DURATION = 20000; 
         let isPlaying = false;
@@ -365,6 +422,7 @@
         
         let pressure = 0;
         let targetPressure = 0;
+        let pointerDown = false;
         let clickTimes = [];
         let bpm = 0;
         let perfectTicks = 0;
@@ -383,7 +441,7 @@
         const scoreDisplay = document.getElementById('scoreDisplay');
         const waveCanvas = document.getElementById('waveCanvas');
         const ambientWarning = document.getElementById('ambientWarning');
-        const StarkResults = document.getElementById('resultsScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
         const mouseBody = document.getElementById('mouseBody');
         const mouseSkin = document.getElementById('mouseSkin');
         const mouseHead = document.getElementById('mouseHead');
@@ -456,9 +514,9 @@
             
             const record = {
                 name: name,
-                score: score,
-                avgPressure: sumPressure / totalTicks,
-                avgBPM: sumBpm / totalTicks,
+                score: Number.isFinite(score) ? score : 0,
+                avgPressure: totalTicks > 0 ? (sumPressure / totalTicks) : 0,
+                avgBPM: totalTicks > 0 ? (sumBpm / totalTicks) : 0,
                 timestamp: Date.now()
             };
 
@@ -470,7 +528,10 @@
                     showToast("成功上傳至雲端！", "success");
                     switchTab('leaderboard');
                     document.getElementById('submissionArea').classList.add('hidden');
-                }).catch(() => fallbackSave(record));
+                }).catch((err) => {
+                    console.error("雲端上傳失敗，改存本機:", err);
+                    fallbackSave(record);
+                });
             } else {
                 fallbackSave(record);
             }
@@ -481,7 +542,7 @@
             window.localLeaderboard.sort((a, b) => b.score - a.score);
             window.localLeaderboard = window.localLeaderboard.slice(0, 15);
             localStorage.setItem('mouse_massage_local_board', JSON.stringify(window.localLeaderboard));
-            showToast("成功儲存至本機快取！", "success");
+            showToast("雲端未連線，已儲存至本機快取！", "success");
             switchTab('leaderboard');
             document.getElementById('submissionArea').classList.add('hidden');
         }
@@ -535,14 +596,8 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        let pointerDown = false;
-        let lastTouchTime = 0; 
-
-        function pressStart(clientX, clientY, isTouch = false) {
-            const now = Date.now();
-            if (!isTouch && (now - lastTouchTime < 300)) return; 
-            if (isTouch) lastTouchTime = now; 
-
+        // 🌟 核心修復：使用滑鼠與觸控完全相容的事件觸發機制
+        function pressStart(clientX, clientY) {
             if (!isPlaying) startChallenge();
 
             const rect = tapArea.getBoundingClientRect();
@@ -557,20 +612,8 @@
             fabricPlate.classList.add('bg-pink-500/40');
 
             targetPressure = 0.24 + (Math.random() * 0.07); 
-            if (clickTimes.length === 0 || (now - clickTimes[clickTimes.length - 1] > 60)) {
-                clickTimes.push(now);
-            }
-            evaluateBPM(isTouch);
-            
-            if (isTouch) {
-                setTimeout(() => {
-                    if (pointerDown) {
-                        targetPressure = 0;
-                        mouseBody.classList.remove('scale-95');
-                        fabricPlate.classList.remove('bg-pink-500/40');
-                    }
-                }, 40);
-            }
+            clickTimes.push(Date.now());
+            evaluateBPM();
         }
 
         function pressEnd() {
@@ -580,10 +623,13 @@
             targetPressure = 0; 
         }
 
-        tapArea.addEventListener('mousedown', (e) => { pointerDown = true; pressStart(e.clientX, e.clientY, false); });
-        window.addEventListener('mouseup', () => { if (pointerDown) { pointerDown = false; pressEnd(); } });
-        tapArea.addEventListener('touchstart', (e) => { pointerDown = true; pressStart(e.touches[0].clientX, e.touches[0].clientY, true); });
-        window.addEventListener('touchend', () => { if (pointerDown) { pointerDown = false; pressEnd(); } });
+        // 電腦滑鼠監聽
+        tapArea.addEventListener('mousedown', (e) => { pointerDown = true; pressStart(e.clientX, e.clientY); });
+        window.addEventListener('mouseup', () => { if(pointerDown) { pointerDown = false; pressEnd(); } });
+        
+        // 手機觸控監聽
+        tapArea.addEventListener('touchstart', (e) => { e.preventDefault(); pointerDown = true; pressStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+        window.addEventListener('touchend', () => { if(pointerDown) { pointerDown = false; pressEnd(); } });
 
         function startChallenge() {
             if (isPlaying) return;
@@ -599,7 +645,7 @@
             isPlaying = false;
             perfectTicks = 0; totalTicks = 0; sumPressure = 0; sumBpm = 0; clickTimes = []; bpm = 0; pressure = 0; targetPressure = 0;
             timerDisplay.textContent = "20.0s"; scoreDisplay.textContent = "0.0%";
-            StarkResults.classList.add('translate-y-full');
+            resultsScreen.classList.add('translate-y-full');
             submitScoreBtn.disabled = false; submitScoreBtn.textContent = "上傳排行";
             document.getElementById('submissionArea').classList.remove('hidden');
             playerNameInput.value = "";
@@ -615,7 +661,7 @@
             if (remaining <= 0) { remaining = 0; endChallenge(); }
             timerDisplay.textContent = `${remaining.toFixed(1)}s`;
 
-            const decaySpeed = (bpm > 80) ? 0.07 : 0.24; 
+            const decaySpeed = (bpm > 85) ? 0.08 : 0.28; 
             const easing = pointerDown ? 0.28 : decaySpeed;
             pressure += (targetPressure - pressure) * easing;
             if (pressure < 0.01) pressure = 0;
@@ -631,7 +677,7 @@
             bpmBar.style.width = `${Math.min((bpm / 200) * 100, 100)}%`;
 
             const pressureIdeal = (pressure >= 0.10 && pressure <= 0.30);
-            const bpmIdeal = (bpm >= 95 && bpm <= 125);
+            const bpmIdeal = (bpm >= 100 && bpm <= 120);
             if (pressureIdeal && bpmIdeal) perfectTicks++;
 
             scoreDisplay.textContent = `${((perfectTicks / totalTicks) * 100).toFixed(1)}%`;
@@ -650,15 +696,13 @@
             }
         }
 
-        function evaluateBPM(isTouch = false) {
+        function evaluateBPM() {
             const now = Date.now();
             clickTimes = clickTimes.filter(t => (now - t) < 3000);
             if (clickTimes.length < 2) { bpm = 0; return; }
             let totalInterval = 0;
             for (let i = 1; i < clickTimes.length; i++) totalInterval += (clickTimes[i] - clickTimes[i-1]);
-            
-            let calculatedBpm = 60000 / (totalInterval / (clickTimes.length - 1));
-            if (isTouch) { bpm = bpm * 0.3 + calculatedBpm * 0.7; } else { bpm = calculatedBpm; }
+            bpm = 60000 / (totalInterval / (clickTimes.length - 1)); 
         }
 
         let irsValue = 0, pi3kValue = 0, aktValue = 0, glut4Value = 0;
@@ -667,7 +711,7 @@
                 irsValue = Math.min(100, irsValue + 3);
                 if (irsValue > 40) pi3kValue = Math.min(100, pi3kValue + 3);
                 if (pi3kValue > 50) aktValue = Math.min(100, aktValue + 3);
-                if (pi3kValue > 60) glut4Value = Math.min(100, glut4Value + 3);
+                if (aktValue > 60) glut4Value = Math.min(100, glut4Value + 3);
             } else {
                 irsValue = Math.max(0, irsValue - 0.4); pi3kValue = Math.max(0, pi3kValue - 0.4);
                 aktValue = Math.max(0, aktValue - 0.4); glut4Value = Math.max(0, glut4Value - 0.4);
@@ -726,7 +770,12 @@
         }
 
         function endChallenge() {
-            clearInterval(gameTimer); isPlaying = false; pointerDown = false; targetPressure = 0;
+            clearInterval(gameTimer);
+            isPlaying = false;
+            pointerDown = false;
+            targetPressure = 0;
+
+            // 防止 totalTicks 為 0 導致 NaN
             const finalScore = totalTicks > 0 ? (perfectTicks / totalTicks) * 100 : 0;
             const avgPressure = totalTicks > 0 ? (sumPressure / totalTicks) : 0;
             const avgBPM = totalTicks > 0 ? (sumBpm / totalTicks) : 0;
@@ -735,12 +784,22 @@
             document.getElementById('avgBPMVal').textContent = `${Math.round(avgBPM)}`;
             document.getElementById('finalScoreVal').textContent = `${finalScore.toFixed(1)}%`;
 
-            if (finalScore >= 90) document.getElementById('resultTitle').textContent = "🥇 首席方法學專家";
-            else if (finalScore >= 70) document.getElementById('resultTitle').textContent = "🥈 實驗室手感流大師";
-            else if (finalScore >= 51) document.getElementById('resultTitle').textContent = "🥉 標準化實習助理";
-            else document.getElementById('resultTitle').textContent = "🐭 按摩鼠鼠觀察員";
+            // 分級稱號：0–50、51–69、70–89、90–100
+            if (finalScore >= 90) {
+                document.getElementById('resultTitle').textContent = "🥇 首席方法學專家";
+                document.getElementById('resultDesc').textContent = "您的操作高度穩定，壓力與頻率控制接近標準化示範等級。";
+            } else if (finalScore >= 70) {
+                document.getElementById('resultTitle').textContent = "🥈 實驗室手感流大師";
+                document.getElementById('resultDesc').textContent = "手感相當不錯，已具備穩定操作能力，再微調節奏即可更接近 SOP 標準。";
+            } else if (finalScore >= 51) {
+                document.getElementById('resultTitle').textContent = "🥉 標準化實習助理";
+                document.getElementById('resultDesc').textContent = "已掌握基本操作概念，但壓力或頻率仍需再練習以提升一致性。";
+            } else {
+                document.getElementById('resultTitle').textContent = "🐭 按摩鼠鼠觀察員";
+                document.getElementById('resultDesc').textContent = "目前比較適合先觀察 SOP 示範，下一輪再挑戰穩定節奏與施力。";
+            }
 
-            StarkResults.classList.remove('translate-y-full');
+            resultsScreen.classList.remove('translate-y-full');
         }
 
         function showToast(message, type = 'info') {
@@ -749,7 +808,10 @@
             setTimeout(() => { toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 pointer-events-none"; }, 3000);
         }
 
+        // 預先載入預設排行榜
         window.updateLeaderboardUI(window.localLeaderboard);
+        
+        // 彈出歡迎視窗
         setTimeout(() => { toggleHelp(true); }, 400);
     </script>
 </body>
