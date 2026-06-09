@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JoVE 文獻互動挑戰：小鼠腹部按摩定量模擬器</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,116 +12,144 @@
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=PingFang+TC:wght@400;600;700&display=swap');
         body {
             font-family: 'PingFang TC', sans-serif;
+            /* 防止手機拉動網頁時出現彈簧橡皮筋效果，干擾連續點擊 */
+            overscroll-behavior-y: contain;
+            -webkit-tap-highlight-color: transparent;
         }
         .mono-font {
             font-family: 'JetBrains Mono', monospace;
         }
-        /* Custom scrollbar for neat aesthetic */
+        /* 美化滾動條 */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         ::-webkit-scrollbar-track {
             background: #1e293b;
         }
         ::-webkit-scrollbar-thumb {
             background: #475569;
-            border-radius: 3px;
+            border-radius: 2px;
+        }
+        /* 限制手機連續點擊時的文字誤選 */
+        .no-select {
+            -webkit-user-select: none;
+            user-select: none;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-orange-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-orange-500 selection:text-white no-select">
 
     <!-- Header -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-gradient-to-tr from-orange-500 to-amber-500 p-2 rounded-lg shadow-lg shadow-orange-500/20">
-                    <i class="fa-solid fa-square-poll-vertical text-xl text-white"></i>
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50 px-4 py-2.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+                <div class="bg-gradient-to-tr from-orange-500 to-amber-500 p-1.5 rounded-lg shadow-lg shadow-orange-500/20 flex-shrink-0">
+                    <i class="fa-solid fa-square-poll-vertical text-base text-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-100 tracking-wide">小鼠腹部按摩定量與胰島素通路激活挑戰</h1>
-                    <p class="text-xs text-slate-400">文獻來源評估：JoVE (2025) e68226 · 技術方法標準化與 QbyD 思維實踐</p>
+                    <h1 class="text-sm md:text-lg font-bold text-slate-100 tracking-wide leading-tight">小鼠腹部按摩定量挑戰</h1>
+                    <p class="text-[10px] text-slate-400">JoVE (2025) e68226 · 方法標準化研究</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    SOP 仿真模式
-                </span>
-                <button id="helpBtn" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors" title="使用說明">
-                    <i class="fa-solid fa-circle-question text-lg"></i>
+            <div class="flex items-center gap-1.5">
+                <button id="helpBtn" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+                    <i class="fa-solid fa-circle-question text-base"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Dashboard Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Main Dashboard Container (手機改為單欄上下流向) -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-3 py-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
         
-        <!-- Left Column: Simulator Console (7/12) -->
-        <section class="lg:col-span-7 flex flex-col gap-6">
+        <!-- Simulator Console (7/12) -->
+        <section class="lg:col-span-7 flex flex-col gap-4">
             
             <!-- Game Controller Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-3">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <span class="p-1.5 bg-orange-500/10 text-orange-400 rounded-lg text-sm">
+                    <div class="flex items-center gap-1.5">
+                        <span class="p-1 bg-orange-500/10 text-orange-400 rounded text-xs">
                             <i class="fa-solid fa-gamepad"></i>
                         </span>
-                        <h2 class="font-bold text-slate-100">干預操作挑戰區</h2>
+                        <h2 class="text-xs md:text-sm font-bold text-slate-100">干預操作區</h2>
                     </div>
                     <!-- Score & Timer -->
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
                         <div class="text-right">
-                            <div class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">干預時間</div>
-                            <div id="timerDisplay" class="text-lg font-bold mono-font text-amber-400">20.0s</div>
+                            <div class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">剩餘時間</div>
+                            <div id="timerDisplay" class="text-sm md:text-base font-bold mono-font text-amber-400">20.0s</div>
                         </div>
-                        <div class="text-right border-l border-slate-800 pl-4">
-                            <div class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold">SOP 一致性得分</div>
-                            <div id="scoreDisplay" class="text-lg font-bold mono-font text-emerald-400">0.0%</div>
+                        <div class="text-right border-l border-slate-800 pl-3">
+                            <div class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider">SOP 一致性</div>
+                            <div id="scoreDisplay" class="text-sm md:text-base font-bold mono-font text-emerald-400">0.0%</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Simulation Interactive Area -->
-                <div class="relative bg-slate-950 border border-slate-800/80 rounded-xl p-6 h-80 flex flex-col items-center justify-center overflow-hidden group">
+                <!-- 🚀 【手機版核心優化】即時儀表看板上移至小鼠上方，防止被手指擋住 -->
+                <div class="grid grid-cols-2 gap-3 bg-slate-950 p-2.5 border border-slate-800/60 rounded-xl">
+                    <!-- Pressure Gauge -->
+                    <div class="flex flex-col gap-0.5">
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
+                            <span>FPS 操作壓力</span>
+                            <span class="mono-font text-[8px] text-orange-400">目標:0.1-0.3</span>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <span id="pressureVal" class="text-xl font-bold mono-font text-orange-400">0.00</span>
+                            <span class="text-[9px] text-slate-500 font-semibold">N/cm²</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-0.5 relative">
+                            <div id="pressureBar" class="h-full bg-orange-500 transition-all duration-100" style="width: 0%"></div>
+                            <div class="absolute left-[20%] top-0 bottom-0 w-[40%] bg-emerald-500/20 border-l border-r border-emerald-400/40"></div>
+                        </div>
+                    </div>
+                    <!-- Frequency BPM Gauge -->
+                    <div class="flex flex-col gap-0.5">
+                        <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
+                            <span>即時按摩頻率</span>
+                            <span class="mono-font text-[8px] text-cyan-400">目標:100-120</span>
+                        </div>
+                        <div class="flex items-baseline gap-1">
+                            <span id="bpmVal" class="text-xl font-bold mono-font text-cyan-400">0</span>
+                            <span class="text-[9px] text-slate-500 font-semibold">BPM</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden mt-0.5 relative">
+                            <div id="bpmBar" class="h-full bg-cyan-500 transition-all duration-200" style="width: 0%"></div>
+                            <div class="absolute left-[50%] top-0 bottom-0 w-[10%] bg-emerald-500/20 border-l border-r border-emerald-400/40"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Interactive Area (手機端等比例自適應高度) -->
+                <div class="relative bg-slate-950 border border-slate-800/80 rounded-xl p-4 h-64 flex flex-col items-center justify-center overflow-hidden">
                     
                     <!-- Mouse & Fixation Plate Graphic Box -->
-                    <div id="mousePlate" class="relative w-72 h-44 transition-all duration-300 flex items-center justify-center">
-                        <!-- PP Trapezoidal Fixation Plate (Transparent Outline) -->
-                        <div class="absolute w-64 h-36 border-2 border-slate-700/60 bg-slate-900/30 rounded-lg transform skew-x-3 shadow-inner flex items-center justify-center">
+                    <div id="mousePlate" class="relative w-full max-w-[260px] h-36 flex items-center justify-center transform scale-95 md:scale-100 transition-all">
+                        <!-- PP Trapezoidal Fixation Plate -->
+                        <div class="absolute w-full h-28 border-2 border-slate-700/60 bg-slate-900/30 rounded-lg transform skew-x-2 shadow-inner flex items-center justify-center">
                             <!-- Soft Fabric Pink Cover Layer -->
-                            <div id="fabricPlate" class="absolute w-52 h-24 bg-pink-500/20 border border-pink-500/30 rounded-full transition-colors duration-300"></div>
+                            <div id="fabricPlate" class="absolute w-[80%] h-20 bg-pink-500/20 border border-pink-500/30 rounded-full transition-colors duration-300"></div>
                         </div>
 
                         <!-- Mouse SVG Body -->
-                        <div id="mouseBody" class="relative z-10 w-44 h-16 transition-all duration-200">
-                            <svg viewBox="0 0 200 80" class="w-full h-full drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
-                                <!-- Tail -->
-                                <path d="M 20 40 Q 5 25 15 15" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" class="animate-pulse" />
-                                <!-- Mouse Main Body (Back/Underbelly) -->
+                        <div id="mouseBody" class="relative z-10 w-[75%] h-14 transition-all duration-200">
+                            <svg viewBox="0 0 200 80" class="w-full h-full drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                                <path d="M 20 40 Q 5 25 15 15" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" />
                                 <ellipse cx="100" cy="40" rx="60" ry="26" fill="#475569" id="mouseSkin" class="transition-colors duration-300" />
-                                <!-- Head & Ear -->
                                 <ellipse cx="155" cy="38" rx="20" ry="16" fill="#475569" id="mouseHead" class="transition-colors duration-300" />
                                 <circle cx="148" cy="22" r="12" fill="#334155" />
                                 <circle cx="148" cy="22" r="8" fill="#f43f5e" opacity="0.4" />
-                                <!-- Eye -->
                                 <circle cx="165" cy="35" r="2.5" fill="#1e293b" />
-                                <!-- Nose & Whiskers -->
                                 <polygon points="175,38 171,34 171,42" fill="#f43f5e" />
-                                <line x1="168" y1="42" x2="160" y2="48" stroke="#94a3b8" stroke-width="1" />
-                                <line x1="168" y1="42" x2="164" y2="52" stroke="#94a3b8" stroke-width="1" />
-                                <!-- Limps (Bound Outside) -->
                                 <line x1="60" y1="15" x2="45" y2="5" stroke="#334155" stroke-width="3" stroke-linecap="round" />
                                 <line x1="140" y1="15" x2="150" y2="5" stroke="#334155" stroke-width="3" stroke-linecap="round" />
                                 <line x1="60" y1="65" x2="45" y2="75" stroke="#334155" stroke-width="3" stroke-linecap="round" />
                                 <line x1="140" y1="65" x2="150" y2="75" stroke="#334155" stroke-width="3" stroke-linecap="round" />
                                 
-                                <!-- Shenque & Tianshu Target Area Indicator -->
-                                <circle cx="100" cy="40" r="14" fill="none" stroke="#f97316" stroke-dasharray="4" stroke-width="1.5" class="animate-[spin_10s_linear_infinite]" />
+                                <circle cx="100" cy="40" r="14" fill="none" stroke="#f97316" stroke-dasharray="4" stroke-width="1.5" class="animate-[spin_12s_linear_infinite]" />
                                 <circle cx="100" cy="40" r="2" fill="#ea580c" />
-                                <text x="100" y="32" font-family="sans-serif" font-size="8" fill="#f97316" text-anchor="middle" font-weight="bold">神闕</text>
-                                <!-- Tianshu Acupoints -->
+                                <text x="100" y="32" font-family="sans-serif" font-size="9" fill="#f97316" text-anchor="middle" font-weight="bold">神闕</text>
                                 <circle cx="84" cy="40" r="1.5" fill="#f97316" />
                                 <circle cx="116" cy="40" r="1.5" fill="#f97316" />
                             </svg>
@@ -130,221 +158,169 @@
 
                     <!-- Tactile Tap Area Layer Overlay -->
                     <div id="tapArea" class="absolute inset-0 cursor-pointer z-30 flex items-center justify-center">
-                        <!-- Ripple Effect Ring Generator -->
-                        <div id="rippleRing" class="absolute w-20 h-20 rounded-full border border-orange-500/0 scale-50 opacity-0 transition-all duration-300 pointer-events-none"></div>
+                        <div id="rippleRing" class="absolute w-16 h-16 rounded-full border border-orange-500/0 scale-50 opacity-0 transition-all duration-300 pointer-events-none"></div>
                     </div>
 
                     <!-- Ambient Alert Message Overlay -->
-                    <div id="ambientWarning" class="absolute bottom-4 left-4 right-4 text-center px-3 py-1.5 rounded bg-slate-900/90 border border-slate-800 text-xs text-slate-400 pointer-events-none transition-all duration-300">
-                        點擊/觸控小鼠腹部靶區以開始按摩操作（順時針旋轉）
+                    <div id="ambientWarning" class="absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 pointer-events-none transition-all duration-300">
+                        規律輕點/觸控小鼠腹部靶區開始操作
                     </div>
 
                     <!-- Simulation Complete Banner -->
-                    <div id="resultsScreen" class="absolute inset-0 bg-slate-950/95 z-40 flex flex-col items-center justify-center gap-4 transition-all duration-300 translate-y-full">
+                    <div id="resultsScreen" class="absolute inset-0 bg-slate-950/98 z-40 flex flex-col items-center justify-center gap-3 transition-all duration-300 translate-y-full px-4">
                         <div class="text-center">
-                            <div class="text-sm text-slate-400 uppercase tracking-widest font-semibold mb-1">評估報告</div>
-                            <h3 id="resultTitle" class="text-2xl font-bold text-amber-400">資深方法學專家</h3>
-                            <p id="resultDesc" class="text-xs text-slate-300 max-w-sm mt-2 px-4 leading-relaxed">您的手法非常精確且具高度可重現性，完美達到 0.1 - 0.3 N/cm² 控壓要求！</p>
+                            <div class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">評估報告</div>
+                            <h3 id="resultTitle" class="text-base font-bold text-amber-400">資深方法學專家</h3>
+                            <p id="resultDesc" class="text-[10px] text-slate-300 max-w-xs mt-1 leading-relaxed">您的手法非常精確且具高度可重現性！</p>
                         </div>
-                        <div class="flex gap-4 text-center">
-                            <div class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
-                                <span class="block text-[10px] text-slate-400">平均壓力</span>
-                                <span id="avgPressureVal" class="text-sm font-bold mono-font text-orange-400">0.21 N/cm²</span>
+                        <div class="flex gap-2 text-center w-full max-w-xs justify-center">
+                            <div class="bg-slate-900 border border-slate-800 rounded-lg p-2 flex-1">
+                                <span class="block text-[8px] text-slate-400">平均壓力</span>
+                                <span id="avgPressureVal" class="text-xs font-bold mono-font text-orange-400">0.21</span>
                             </div>
-                            <div class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
-                                <span class="block text-[10px] text-slate-400">平均頻率</span>
-                                <span id="avgBPMVal" class="text-sm font-bold mono-font text-cyan-400">112 BPM</span>
+                            <div class="bg-slate-900 border border-slate-800 rounded-lg p-2 flex-1">
+                                <span class="block text-[8px] text-slate-400">平均頻率</span>
+                                <span id="avgBPMVal" class="text-xs font-bold mono-font text-cyan-400">112</span>
                             </div>
-                            <div class="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5">
-                                <span class="block text-[10px] text-slate-400">SOP 一致性</span>
-                                <span id="finalScoreVal" class="text-sm font-bold mono-font text-emerald-400">89.4%</span>
+                            <div class="bg-slate-900 border border-slate-800 rounded-lg p-2 flex-1">
+                                <span class="block text-[8px] text-slate-400">SOP一致性</span>
+                                <span id="finalScoreVal" class="text-xs font-bold mono-font text-emerald-400">89.4%</span>
                             </div>
                         </div>
                         
                         <!-- Leaderboard Submission Area -->
-                        <div id="submissionArea" class="w-full max-w-xs flex flex-col gap-2 mt-2 px-4">
+                        <div id="submissionArea" class="w-full max-w-xs flex flex-col gap-2 px-2">
                             <div class="flex gap-2">
-                                <input id="playerNameInput" type="text" maxlength="10" placeholder="輸入您的研究員代號..." class="flex-1 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-100 text-center focus:outline-none focus:border-orange-500">
-                                <button id="submitScoreBtn" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-colors">
-                                    提交排行
+                                <input id="playerNameInput" type="text" maxlength="10" placeholder="輸入研究員代號..." class="flex-1 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-100 text-center focus:outline-none focus:border-orange-500">
+                                <button id="submitScoreBtn" class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-colors">
+                                    上傳排行
                                 </button>
                             </div>
                         </div>
 
-                        <div class="flex gap-3 mt-1">
-                            <button id="restartBtn" class="px-5 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 font-semibold text-xs transition-colors shadow-lg shadow-orange-600/20">
+                        <div class="flex gap-2 mt-0.5">
+                            <button id="restartBtn" class="px-4 py-1.5 rounded-lg bg-orange-600 hover:bg-orange-500 font-semibold text-xs transition-colors shadow-lg">
                                 重新挑戰
                             </button>
-                            <button id="shareScoreBtn" class="px-5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 font-semibold text-xs transition-colors border border-slate-700">
+                            <button id="shareScoreBtn" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-semibold text-xs transition-colors border border-slate-700">
                                 複製研究評級
                             </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Live Parameter Indicators -->
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- Pressure Gauge -->
-                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col gap-1">
-                        <div class="flex justify-between items-center text-xs text-slate-400 font-medium">
-                            <span>FPS 即時操作壓力</span>
-                            <span class="mono-font text-[10px] text-orange-400">目標: 0.1-0.3 N/cm²</span>
-                        </div>
-                        <div class="flex items-baseline gap-2">
-                            <span id="pressureVal" class="text-2xl font-bold mono-font text-orange-400">0.00</span>
-                            <span class="text-[10px] text-slate-500 font-semibold">N/cm²</span>
-                        </div>
-                        <!-- Color status bar -->
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-1 relative">
-                            <div id="pressureBar" class="h-full bg-orange-500 transition-all duration-100" style="width: 0%"></div>
-                            <!-- Target indicator line -->
-                            <div class="absolute left-[20%] top-0 bottom-0 w-[40%] bg-emerald-500/20 border-l border-r border-emerald-400/40 pointer-events-none"></div>
-                        </div>
-                    </div>
-                    <!-- Frequency BPM Gauge -->
-                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col gap-1">
-                        <div class="flex justify-between items-center text-xs text-slate-400 font-medium">
-                            <span>即時按摩頻率</span>
-                            <span class="mono-font text-[10px] text-cyan-400">目標: 100-120 次/分</span>
-                        </div>
-                        <div class="flex items-baseline gap-2">
-                            <span id="bpmVal" class="text-2xl font-bold mono-font text-cyan-400">0</span>
-                            <span class="text-[10px] text-slate-500 font-semibold">BPM</span>
-                        </div>
-                        <!-- Color status bar -->
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden mt-1 relative">
-                            <div id="bpmBar" class="h-full bg-cyan-500 transition-all duration-200" style="width: 0%"></div>
-                            <!-- Target indicator line -->
-                            <div class="absolute left-[50%] top-0 bottom-0 w-[10%] bg-emerald-500/20 border-l border-r border-emerald-400/40 pointer-events-none"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Realtime FPS Waveform Monitor -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-3">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-2">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <span class="p-1.5 bg-indigo-500/10 text-indigo-400 rounded-lg text-sm">
+                    <div class="flex items-center gap-1.5">
+                        <span class="p-1 bg-indigo-500/10 text-indigo-400 rounded text-xs">
                             <i class="fa-solid fa-wave-square"></i>
                         </span>
-                        <h2 class="font-bold text-slate-100">柔性壓力感測系統 (FPS) 即時波形圖</h2>
+                        <h2 class="text-xs font-bold text-slate-100">FPS 感測系統即時波形圖</h2>
                     </div>
-                    <span class="text-[10px] mono-font text-slate-500">單位: N/cm² · 採樣: 60Hz</span>
                 </div>
-                <div class="bg-slate-950 rounded-xl p-2 border border-slate-800">
-                    <canvas id="waveCanvas" class="w-full h-24 bg-slate-950 rounded-lg"></canvas>
+                <div class="bg-slate-950 rounded-lg p-1.5 border border-slate-800">
+                    <canvas id="waveCanvas" class="w-full h-16 bg-slate-950 rounded"></canvas>
                 </div>
             </div>
         </section>
 
         <!-- Right Column: Pathway & Leaderboard Tabs (5/12) -->
-        <section class="lg:col-span-5 flex flex-col gap-6">
+        <section class="lg:col-span-5 flex flex-col gap-4">
             
             <!-- Dual Tab Selector -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4 flex-1">
-                <div class="flex border-b border-slate-800">
-                    <button id="tabMechanismBtn" class="flex-1 pb-3 text-sm font-bold text-orange-400 border-b-2 border-orange-500 transition-all focus:outline-none">
-                        <i class="fa-solid fa-dna mr-1.5"></i>分子通路機制
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-3 flex-1">
+                <div class="flex border-b border-slate-800 text-xs">
+                    <button id="tabMechanismBtn" class="flex-1 pb-2.5 font-bold text-orange-400 border-b-2 border-orange-500 transition-all focus:outline-none">
+                        <i class="fa-solid fa-dna mr-1"></i>分子機制
                     </button>
-                    <button id="tabLeaderboardBtn" class="flex-1 pb-3 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all focus:outline-none">
-                        <i class="fa-solid fa-trophy mr-1.5"></i>實驗室排行榜
+                    <button id="tabLeaderboardBtn" class="flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all focus:outline-none">
+                        <i class="fa-solid fa-trophy mr-1"></i>實驗室排行榜
                     </button>
                 </div>
 
                 <!-- Tab Content 1: Mechanism -->
-                <div id="tabMechanism" class="flex flex-col gap-4 flex-1">
+                <div id="tabMechanism" class="flex flex-col gap-3 flex-1">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-400 font-semibold">通路即時狀態</span>
-                        <span id="metabolicActivity" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
+                        <span class="text-[10px] text-slate-400 font-semibold">通路狀態</span>
+                        <span id="metabolicActivity" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
                             靜止狀態
                         </span>
                     </div>
 
-                    <p class="text-[11px] text-slate-400 leading-relaxed">
-                        在<strong>清醒狀態下</strong>給予小鼠定量按摩，可物理性激活肝臟微循環與代謝網絡。隨著您的按壓壓力和頻率維持在標準綠色區間內，下列胰島素信號通路將由上至下依序被激活！
-                    </p>
-
                     <!-- Molecular Cascade Interactive Animation -->
-                    <div class="flex-1 bg-slate-950 border border-slate-800/80 rounded-xl p-4 flex flex-col gap-3 justify-between min-h-[300px]">
-                        <!-- Insulin Receptor Substrate (IRS-1 / IRS-2) -->
-                        <div class="relative flex flex-col gap-1 group">
-                            <div class="flex justify-between items-center text-xs">
+                    <div class="flex-1 bg-slate-950 border border-slate-800/80 rounded-xl p-3 flex flex-col gap-3 justify-between min-h-[240px]">
+                        <!-- IRS-1 -->
+                        <div class="relative flex flex-col gap-0.5">
+                            <div class="flex justify-between items-center text-[11px]">
                                 <span class="font-semibold text-slate-300">1. IRS-1/2 酪氨酸磷酸化</span>
-                                <span id="irsPct" class="mono-font text-slate-400 text-[10px]">0%</span>
+                                <span id="irsPct" class="mono-font text-slate-400 text-[9px]">0%</span>
                             </div>
-                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden relative">
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
                                 <div id="irsBar" class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-300" style="width: 0%"></div>
                             </div>
-                            <span class="text-[9px] text-slate-500">物理刺激傳遞，啟動肝臟胰島素受體受質蛋白磷酸化</span>
                         </div>
 
-                        <!-- PI3-Kinase Activation -->
-                        <div class="relative flex flex-col gap-1">
-                            <div class="flex justify-between items-center text-xs">
+                        <!-- PI3K -->
+                        <div class="relative flex flex-col gap-0.5">
+                            <div class="flex justify-between items-center text-[11px]">
                                 <span class="font-semibold text-slate-300">2. PI3K 磷脂酰肌醇激酶活化</span>
-                                <span id="pi3kPct" class="mono-font text-slate-400 text-[10px]">0%</span>
+                                <span id="pi3kPct" class="mono-font text-slate-400 text-[9px]">0%</span>
                             </div>
-                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden relative">
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
                                 <div id="pi3kBar" class="h-full bg-gradient-to-r from-teal-600 to-teal-400 transition-all duration-300" style="width: 0%"></div>
                             </div>
-                            <span class="text-[9px] text-slate-500">IRS-1 活化並募集 PI3K，傳遞下游第二信使分子</span>
                         </div>
 
-                        <!-- AKT (Protein Kinase B) Phosphorylation -->
-                        <div class="relative flex flex-col gap-1">
-                            <div class="flex justify-between items-center text-xs">
+                        <!-- AKT -->
+                        <div class="relative flex flex-col gap-0.5">
+                            <div class="flex justify-between items-center text-[11px]">
                                 <span class="font-semibold text-slate-300">3. AKT 蛋白激酶 B 磷酸化</span>
-                                <span id="aktPct" class="mono-font text-slate-400 text-[10px]">0%</span>
+                                <span id="aktPct" class="mono-font text-slate-400 text-[9px]">0%</span>
                             </div>
-                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden relative">
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
                                 <div id="aktBar" class="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-300" style="width: 0%"></div>
                             </div>
-                            <span class="text-[9px] text-slate-500">關鍵分子 AKT 磷酸化，控制肝臟內源性糖異生與糖原合成</span>
                         </div>
 
-                        <!-- GLUT4 Translocation & Glucose Uptake -->
-                        <div class="relative flex flex-col gap-1">
-                            <div class="flex justify-between items-center text-xs">
+                        <!-- GLUT4 -->
+                        <div class="relative flex flex-col gap-0.5">
+                            <div class="flex justify-between items-center text-[11px]">
                                 <span class="font-semibold text-slate-300">4. GLUT4 葡萄糖轉運體轉位</span>
-                                <span id="glut4Pct" class="mono-font text-slate-400 text-[10px]">0%</span>
+                                <span id="glut4Pct" class="mono-font text-slate-400 text-[9px]">0%</span>
                             </div>
-                            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden relative">
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
                                 <div id="glut4Bar" class="h-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-300" style="width: 0%"></div>
                             </div>
-                            <span class="text-[9px] text-slate-500">GLUT4 囊泡轉置融合至肝細胞膜，大幅提高葡萄糖攝入</span>
                         </div>
 
-                        <!-- Micro-Animation Panel: Glucose entering the Membrane -->
-                        <div class="border-t border-slate-800 pt-2 flex items-center justify-between gap-3">
-                            <div class="text-[10px] text-slate-400 leading-tight max-w-[140px]">
+                        <!-- Micro-Animation Panel -->
+                        <div class="border-t border-slate-800 pt-2 flex items-center justify-between gap-2">
+                            <div class="text-[9px] text-slate-400 leading-tight max-w-[110px]">
                                 <span class="block font-semibold text-slate-300">葡萄糖攝取狀態</span>
-                                <span id="glucoseStatusText">待定：等候 SOP 標準干預</span>
+                                <span id="glucoseStatusText" class="text-[8px]">等候 SOP 標準干預</span>
                             </div>
-                            <div class="relative flex-1 h-10 bg-slate-900 rounded-lg border border-slate-800 overflow-hidden flex items-center justify-around px-2">
-                                <div class="absolute right-3 top-0 bottom-0 w-1 bg-amber-500/40 rounded-full" title="細胞膜"></div>
-                                <div id="glucoseParticles" class="flex gap-2 w-full justify-start z-10 transition-all duration-300"></div>
+                            <div class="relative flex-1 h-8 bg-slate-900 rounded-lg border border-slate-800 overflow-hidden flex items-center justify-around px-2">
+                                <div class="absolute right-2 top-0 bottom-0 w-0.5 bg-amber-500/40 rounded-full"></div>
+                                <div id="glucoseParticles" class="flex gap-1 w-full justify-start z-10 transition-all duration-300"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tab Content 2: Leaderboard -->
-                <div id="tabLeaderboard" class="hidden flex flex-col gap-3 flex-1">
-                    <div class="flex items-center justify-between text-xs text-slate-400">
+                <div id="tabLeaderboard" class="hidden flex flex-col gap-2 flex-1">
+                    <div class="flex items-center justify-between text-[10px] text-slate-400">
                         <span>本校/實驗室即時數據</span>
-                        <span id="syncStatus" class="text-[10px] text-emerald-400 flex items-center gap-1">
+                        <span id="syncStatus" class="text-[9px] text-emerald-400 flex items-center gap-1">
                             <i class="fa-solid fa-cloud"></i>已即時雲端同步
                         </span>
                     </div>
 
                     <!-- Ranking List Scroll Box -->
-                    <div class="flex-1 bg-slate-950 border border-slate-800/80 rounded-xl p-3 flex flex-col gap-2 overflow-y-auto max-h-[360px] min-h-[300px]" id="leaderboardList">
-                        <!-- Will be dynamically generated -->
-                        <div class="text-center text-slate-500 text-xs py-8">排行榜載入中...</div>
-                    </div>
-                    <div class="text-[10px] text-slate-500 text-center">
-                        ※ 排行榜排序基準：SOP一致性得分 ➔ 施壓精準度 ➔ 操作頻率
+                    <div class="flex-1 bg-slate-950 border border-slate-800/80 rounded-xl p-2 flex flex-col gap-1.5 overflow-y-auto max-h-[260px] min-h-[220px]" id="leaderboardList">
+                        <div class="text-center text-slate-500 text-xs py-6">排行榜載入中...</div>
                     </div>
                 </div>
             </div>
@@ -353,63 +329,50 @@
 
     <!-- Help Modal Window -->
     <div id="helpModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4 transform scale-95 transition-transform duration-300">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="font-bold text-slate-100 flex items-center gap-2">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl max-w-sm w-full p-5 shadow-2xl flex flex-col gap-3 transform scale-95 transition-transform duration-300">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="text-xs font-bold text-slate-100 flex items-center gap-1.5">
                     <i class="fa-solid fa-circle-info text-orange-400"></i>
                     小鼠按摩定量挑戰說明
                 </h3>
-                <button id="closeHelpBtn" class="text-slate-400 hover:text-white p-1 hover:bg-slate-800 rounded">
+                <button id="closeHelpBtn" class="text-slate-400 hover:text-white p-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             
-            <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
-                <p class="font-semibold text-orange-400">【為什麼要做這個模擬？】</p>
-                <p>
-                    在代謝病中醫推拿（Massage）動物實驗中，最難克服的就是<strong>操作的一致性（Operator consistency）</strong>。本模擬挑戰即是以 JoVE (2025) e68226 發表論文為核心原型設計，讓研究團隊同仁在電腦前體會如何建立「可再製且定量」的手法。
-                </p>
-                
-                <p class="font-semibold text-orange-400">【如何進行干預操作挑戰？】</p>
-                <ul class="list-decimal list-inside space-y-1 bg-slate-950 p-2.5 border border-slate-800 rounded">
-                    <li>使用手指或滑鼠，傳送節奏連續按壓或觸控小鼠腹部。</li>
-                    <li><strong>本機具備組織黏彈性延遲（Viscoelastic Rebound Delay）</strong>，只要以 100-120 BPM 持續點按，壓力即會穩定維持。</li>
-                    <li><strong>頻率維持在 100-120 BPM</strong>，<strong>壓力控制在 0.1 - 0.3 N/cm²</strong>，是激活分子通路的完美範圍。</li>
+            <div class="text-[11px] text-slate-300 space-y-2 leading-relaxed">
+                <p>本模擬挑戰依據 <strong>JoVE (2025) e68226</strong> 論文原型開發[cite: 1]。</p>
+                <p class="font-semibold text-orange-400">【手機操作密技】</p>
+                <ul class="list-disc list-inside space-y-1 bg-slate-950 p-2 rounded border border-slate-800">
+                    <li>用手指像打節拍一樣，<strong>以每秒約 2 下的速度規律輕點</strong>小鼠肚子（神闕穴四周）[cite: 1]。</li>
+                    <li>本系統內建<strong>組織黏彈性物理延遲</strong>。只要保持連續輕點，上方壓力計便會平滑穩定維持，不需要死命按著不放！</li>
+                    <li><strong>頻率:100-120 BPM</strong> 與 <strong>壓力:0.1-0.3 N/cm²</strong> 同時符合即可活化通路[cite: 1]！</li>
                 </ul>
-
-                <p class="font-semibold text-orange-400">【評分機制】</p>
-                <p>
-                    挑戰為期 20 秒。即時系統會計算您落在黃金標靶區的時間。雙參數（壓力與頻率）同時符合標準的時間比例越高，您的 <strong>SOP 一致性得分</strong> 就會越高！
-                </p>
             </div>
 
-            <button id="startPlayBtn" class="w-full py-2 rounded-lg bg-orange-600 hover:bg-orange-500 font-semibold text-xs text-white transition-colors mt-2">
+            <button id="startPlayBtn" class="w-full py-2 rounded-lg bg-orange-600 hover:bg-orange-500 font-semibold text-xs text-white transition-colors">
                 開始挑戰
             </button>
         </div>
     </div>
 
     <!-- Alert Toast Box -->
-    <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 transition-all duration-300 px-4 py-2.5 rounded-lg bg-slate-900 border text-xs flex items-center gap-2 shadow-xl pointer-events-none">
+    <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 transition-all duration-300 px-3 py-2 rounded-lg bg-slate-900 border text-[11px] flex items-center gap-1.5 shadow-xl pointer-events-none">
         <i id="toastIcon" class="fa-solid"></i>
         <span id="toastText"></span>
     </div>
 
-    <footer class="border-t border-slate-900 bg-slate-950/80 px-4 py-4 text-center text-[10px] text-slate-500">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2">
-            <span>© 2026 本團隊研究小組 · 本模擬器符合動物福利 3R原則 (Refinement)</span>
-            <span>技術：HTML5 Canvas / Firebase Firestore 雲端即時同步</span>
-        </div>
+    <footer class="border-t border-slate-900 bg-slate-950/80 px-3 py-3 text-center text-[9px] text-slate-500">
+        <span>© 2026 本團隊研究小組 · 符合動物福利 Refinement 原則[cite: 1]</span>
     </footer>
 
     <!-- Firebase SDK & Core Game Logic (ES Module) -->
     <script type="module">
-        // --- 1. Firebase 核心模組導入 ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 全域變量宣告 (包含您在 image_a8f3e2.png 中的專屬專案金鑰)
+        // 內置您綁定好的 Firebase 連線金鑰
         const myFirebaseConfig = {
             apiKey: "AIzaSyDHUJBsTjFiT4kAgfowQtdDw9bPtOAEVSQ",
             authDomain: "mouse-massage-lab.firebaseapp.com",
@@ -420,50 +383,22 @@
         };
 
         let auth, db, user = null;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'mouse-massage-sim';
+        const appId = 'mouse-massage-sim';
         let isFirebaseActive = false;
 
-        // 本機預設排行榜備用數據（若無 Firebase 連線時）
         let localLeaderboard = JSON.parse(localStorage.getItem('mouse_massage_local_board')) || [
             { name: "SOP-BOT_01", score: 92.5, avgPressure: 0.20, avgBPM: 110, timestamp: Date.now() - 3600000 },
             { name: "SOP-BOT_02", score: 81.2, avgPressure: 0.17, avgBPM: 105, timestamp: Date.now() - 7200000 },
             { name: "助理阿明", score: 65.4, avgPressure: 0.14, avgBPM: 98, timestamp: Date.now() - 10800000 }
         ];
 
-        // --- 2. 初始化 Firebase 連線 (Rule 3) ---
         async function initFirebase() {
             try {
-                // 優先使用內置的 Firebase 金鑰
-                let activeConfig = myFirebaseConfig;
-
-                // 若執行環境有覆寫，則採用外部變數
-                const environmentConfigStr = typeof __firebase_config !== 'undefined' ? __firebase_config : (window.__firebase_config || null);
-                if (environmentConfigStr) {
-                    try {
-                        activeConfig = JSON.parse(environmentConfigStr);
-                    } catch(e) {
-                        console.error("解譯環境變數 config 失敗:", e);
-                    }
-                }
-                
-                if (!activeConfig || !activeConfig.apiKey) {
-                    console.warn("未檢測到 Firebase 配置，本機啟用 localStorage 備用排行榜。");
-                    updateLeaderboardUI(localLeaderboard);
-                    document.getElementById('syncStatus').innerHTML = '<i class="fa-solid fa-cloud-slash text-amber-500"></i>本機暫存模式';
-                    document.getElementById('syncStatus').className = "text-[10px] text-amber-500 flex items-center gap-1";
-                    return;
-                }
-                
-                const app = initializeApp(activeConfig);
+                const app = initializeApp(myFirebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
 
-                // 優先使用自訂權杖，否則使用匿名登入
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                await signInAnonymously(auth);
 
                 onAuthStateChanged(auth, (currentUser) => {
                     user = currentUser;
@@ -475,40 +410,29 @@
                     }
                 });
             } catch (err) {
-                console.error("Firebase 連線初始化失敗:", err);
+                console.error("Firebase 初始化失敗:", err);
                 updateLeaderboardUI(localLeaderboard);
-                document.getElementById('syncStatus').innerHTML = '<i class="fa-solid fa-cloud-slash text-rose-500"></i>雲端連線失敗';
+                document.getElementById('syncStatus').innerHTML = '<i class="fa-solid fa-cloud-slash text-rose-500"></i>雲端未開通/驗證遭封鎖';
                 document.getElementById('syncStatus').className = "text-[10px] text-rose-500 flex items-center gap-1";
             }
         }
 
-        // --- 3. 讀取排行榜 (Rule 2) ---
         async function loadCloudLeaderboard() {
             if (!user || !db) return;
             try {
-                // Rule 1: 嚴格路徑架構
                 const leaderboardCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
                 const snapshot = await getDocs(leaderboardCol);
                 const cloudList = [];
-                snapshot.forEach(doc => {
-                    cloudList.push(doc.data());
-                });
+                snapshot.forEach(doc => cloudList.push(doc.data()));
 
-                // 在記憶體中進行高維排序 (避免建立 Firestore 複雜索引)
-                cloudList.sort((a, b) => {
-                    if (b.score !== a.score) return b.score - a.score;
-                    return b.timestamp - a.timestamp;
-                });
-
-                updateLeaderboardUI(cloudList.slice(0, 15)); // 取前 15 名
+                cloudList.sort((a, b) => b.score - a.score);
+                updateLeaderboardUI(cloudList.slice(0, 15));
             } catch (err) {
-                console.error("載入雲端排行榜失敗:", err);
-                showToast("雲端同步失敗，已載入本機快取。", "error");
+                console.error("載入雲端排行失敗:", err);
                 updateLeaderboardUI(localLeaderboard);
             }
         }
 
-        // --- 4. 提交分數 ---
         async function submitScoreToDb(name, score, avgPressure, avgBPM) {
             const newRecord = {
                 name: name.trim() || "匿名科研員",
@@ -525,8 +449,6 @@
                     showToast("分數成功上傳至實驗室雲端！", "success");
                     await loadCloudLeaderboard();
                 } catch (err) {
-                    console.error("雲端上傳失敗:", err);
-                    showToast("雲端上傳失敗，改為本地端儲存。", "error");
                     saveLocalScore(newRecord);
                 }
             } else {
@@ -539,15 +461,14 @@
             localLeaderboard.sort((a, b) => b.score - a.score);
             localLeaderboard = localLeaderboard.slice(0, 15);
             localStorage.setItem('mouse_massage_local_board', JSON.stringify(localLeaderboard));
-            showToast("成績成功儲存至本機資料夾！", "success");
+            showToast("成績成功儲存至本機快取！", "success");
             updateLeaderboardUI(localLeaderboard);
         }
 
-        // 排行榜 UI 渲染
         function updateLeaderboardUI(records) {
             const listContainer = document.getElementById('leaderboardList');
             if (records.length === 0) {
-                listContainer.innerHTML = '<div class="text-center text-slate-600 text-xs py-8">尚無研究紀錄，快來搶佔第一名！</div>';
+                listContainer.innerHTML = '<div class="text-center text-slate-600 text-xs py-6">尚無紀錄</div>';
                 return;
             }
 
@@ -555,48 +476,30 @@
             records.forEach((rec, idx) => {
                 let rankStyle = "bg-slate-900 text-slate-400";
                 let rankIcon = `${idx + 1}`;
-                if (idx === 0) {
-                    rankStyle = "bg-amber-500/10 text-amber-400 border border-amber-500/30";
-                    rankIcon = '<i class="fa-solid fa-crown text-amber-400"></i>';
-                } else if (idx === 1) {
-                    rankStyle = "bg-slate-400/10 text-slate-300 border border-slate-400/20";
-                } else if (idx === 2) {
-                    rankStyle = "bg-orange-500/10 text-orange-400 border border-orange-500/20";
-                }
+                if (idx === 0) rankStyle = "bg-amber-500/10 text-amber-400 border border-amber-500/30";
+                else if (idx === 1) rankStyle = "bg-slate-400/10 text-slate-300 border border-slate-400/20";
+                else if (idx === 2) rankStyle = "bg-orange-500/10 text-orange-400 border border-orange-500/20";
 
                 html += `
-                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800/40 hover:border-slate-700 transition-all">
-                    <div class="flex items-center gap-3">
-                        <span class="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${rankStyle}">
-                            ${rankIcon}
-                        </span>
+                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800/40">
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold ${rankStyle}">${rankIcon}</span>
                         <div>
                             <span class="text-xs font-bold text-slate-200 block">${rec.name}</span>
-                            <span class="text-[9px] text-slate-500">時戳: ${new Date(rec.timestamp).toLocaleDateString()}</span>
                         </div>
                     </div>
                     <div class="text-right">
                         <div class="text-xs font-bold text-emerald-400 mono-font">${rec.score.toFixed(1)}%</div>
-                        <div class="text-[9px] text-slate-400 mono-font">${rec.avgPressure.toFixed(2)} N/cm² | ${rec.avgBPM} BPM</div>
+                        <div class="text-[9px] text-slate-500 mono-font">${rec.avgPressure.toFixed(2)}N | ${rec.avgBPM}BPM</div>
                     </div>
-                </div>
-                `;
+                </div>`;
             });
-
             listContainer.innerHTML = html;
         }
 
-
         // ==========================================
-        //         核心遊戲引擎與物理機制編寫
+        //         核心遊戲引擎與黏彈性物理算法
         // ==========================================
-
-        const GAME_DURATION = 20000; 
-        let isPlaying = false;
-        let gameTimer = null;
-        let startTime = null;
-        let elapsed = 0;
-        
         let pressure = 0;
         let targetPressure = 0;
         let clickTimes = [];
@@ -605,11 +508,8 @@
         let totalTicks = 0;
         let sumPressure = 0;
         let sumBpm = 0;
-
-        // Waveform History Cache
         const waveHistory = Array(120).fill(0);
 
-        // DOM Elements mapping
         const tapArea = document.getElementById('tapArea');
         const rippleRing = document.getElementById('rippleRing');
         const pressureVal = document.getElementById('pressureVal');
@@ -626,7 +526,6 @@
         const mouseHead = document.getElementById('mouseHead');
         const fabricPlate = document.getElementById('fabricPlate');
 
-        // Pathway
         const irsBar = document.getElementById('irsBar');
         const irsPct = document.getElementById('irsPct');
         const pi3kBar = document.getElementById('pi3kBar');
@@ -639,7 +538,6 @@
         const glucoseStatusText = document.getElementById('glucoseStatusText');
         const glucoseParticles = document.getElementById('glucoseParticles');
 
-        // Tab Switching
         const tabMechanismBtn = document.getElementById('tabMechanismBtn');
         const tabLeaderboardBtn = document.getElementById('tabLeaderboardBtn');
         const tabMechanism = document.getElementById('tabMechanism');
@@ -650,24 +548,19 @@
 
         function switchTab(tab) {
             if (tab === 'mechanism') {
-                tabMechanismBtn.className = "flex-1 pb-3 text-sm font-bold text-orange-400 border-b-2 border-orange-500 focus:outline-none";
-                tabLeaderboardBtn.className = "flex-1 pb-3 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 focus:outline-none";
+                tabMechanismBtn.className = "flex-1 pb-2.5 font-bold text-orange-400 border-b-2 border-orange-500 focus:outline-none";
+                tabLeaderboardBtn.className = "flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 focus:outline-none";
                 tabMechanism.classList.remove('hidden');
                 tabLeaderboard.classList.add('hidden');
             } else {
-                tabLeaderboardBtn.className = "flex-1 pb-3 text-sm font-bold text-orange-400 border-b-2 border-orange-500 focus:outline-none";
-                tabMechanismBtn.className = "flex-1 pb-3 text-sm font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 focus:outline-none";
+                tabLeaderboardBtn.className = "flex-1 pb-2.5 font-bold text-orange-400 border-b-2 border-orange-500 focus:outline-none";
+                tabMechanismBtn.className = "flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 focus:outline-none";
                 tabLeaderboard.classList.remove('hidden');
                 tabMechanism.classList.add('hidden');
-                if (isFirebaseActive) {
-                    loadCloudLeaderboard();
-                } else {
-                    updateLeaderboardUI(localLeaderboard);
-                }
+                if (isFirebaseActive) loadCloudLeaderboard();
             }
         }
 
-        // Help Modal / UI mapping
         const helpBtn = document.getElementById('helpBtn');
         const closeHelpBtn = document.getElementById('closeHelpBtn');
         const startPlayBtn = document.getElementById('startPlayBtn');
@@ -683,39 +576,23 @@
         restartBtn.addEventListener('click', () => { resetChallenge(); startChallenge(); });
         shareScoreBtn.addEventListener('click', () => {
             const finalScore = scoreDisplay.textContent;
-            const rank = document.getElementById('resultTitle').textContent;
-            const textToCopy = `🔬【JoVE小鼠按摩定量挑戰】\n我獲得了 SOP 一致性得分：${finalScore}！\n評估等級：${rank}！\n快來試試看你能否完美控制 0.1-0.3 N/cm² 施壓吧！`;
-            
+            const textToCopy = `🔬【JoVE小鼠按摩定量挑戰】我獲得了 SOP 一致性得分：${finalScore}！快來手機挑戰精準控壓吧！`;
             const el = document.createElement('textarea');
-            el.value = textToCopy;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-            showToast('已複製評級成果，可立即分享至實驗室群組！', 'success');
+            el.value = textToCopy; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            showToast('已複製成果評級！', 'success');
         });
 
-        // 綁定提交按鈕
         submitScoreBtn.addEventListener('click', () => {
             const name = playerNameInput.value.trim();
-            if (!name) {
-                showToast("請輸入代號才能提交排行榜喔！", "info");
-                return;
-            }
+            if (!name) { showToast("請輸入研究員代號！", "info"); return; }
             const score = parseFloat(scoreDisplay.textContent);
-            const avgPressure = sumPressure / totalTicks;
-            const avgBPM = sumBpm / totalTicks;
-
             submitScoreBtn.disabled = true;
             submitScoreBtn.textContent = "上傳中...";
-            submitScoreBtn.className = "px-4 py-1.5 rounded-lg bg-slate-700 text-slate-500 text-xs font-bold cursor-not-allowed";
-
-            submitScoreToDb(name, score, avgPressure, avgBPM).then(() => {
+            submitScoreToDb(name, score, sumPressure / totalTicks, sumBpm / totalTicks).then(() => {
                 setTimeout(() => {
                     switchTab('leaderboard');
-                    // 隱藏提交區域，避免重複提交
                     document.getElementById('submissionArea').classList.add('hidden');
-                }, 800);
+                }, 600);
             });
         });
 
@@ -723,24 +600,20 @@
             if (show) {
                 helpModal.classList.remove('opacity-0', 'pointer-events-none');
                 helpModal.firstElementChild.classList.remove('scale-95');
-                helpModal.firstElementChild.classList.add('scale-100');
             } else {
                 helpModal.classList.add('opacity-0', 'pointer-events-none');
                 helpModal.firstElementChild.classList.add('scale-95');
-                helpModal.firstElementChild.classList.remove('scale-100');
             }
         }
 
-        // Oscilloscope Draw Context
         const ctx = waveCanvas.getContext('2d');
         function resizeCanvas() {
             waveCanvas.width = waveCanvas.parentElement.clientWidth;
-            waveCanvas.height = 96;
+            waveCanvas.height = waveCanvas.parentElement.clientHeight || 64;
         }
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        setTimeout(resizeCanvas, 100);
 
-        // Touch handlers
         let pointerDown = false;
         tapArea.addEventListener('mousedown', (e) => { pointerDown = true; handleTouchStart(e); });
         window.addEventListener('mouseup', () => { pointerDown = false; handleTouchEnd(); });
@@ -754,15 +627,14 @@
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            rippleRing.style.left = `${x - 40}px`;
-            rippleRing.style.top = `${y - 40}px`;
-            rippleRing.classList.remove('scale-50', 'opacity-0');
-            rippleRing.classList.add('scale-150', 'opacity-100', 'border-orange-500/40');
+            rippleRing.style.left = `${x - 32}px`;
+            rippleRing.style.top = `${y - 32}px`;
+            rippleRing.className = "absolute w-16 h-16 rounded-full border scale-150 opacity-100 border-orange-500/50 pointer-events-none transition-all duration-300";
             
-            mouseBody.classList.add('scale-95', 'opacity-90');
+            mouseBody.classList.add('scale-95');
             fabricPlate.classList.add('bg-pink-500/40');
 
-            targetPressure = 0.26 + (Math.random() * 0.08); // Target pressure range
+            targetPressure = 0.25 + (Math.random() * 0.06); 
             
             const now = Date.now();
             clickTimes.push(now);
@@ -770,9 +642,8 @@
         }
 
         function handleTouchEnd() {
-            rippleRing.classList.remove('scale-150', 'opacity-100', 'border-orange-500/40');
-            rippleRing.classList.add('scale-50', 'opacity-0');
-            mouseBody.classList.remove('scale-95', 'opacity-90');
+            rippleRing.className = "absolute w-16 h-16 rounded-full border scale-50 opacity-0 pointer-events-none transition-all duration-300";
+            mouseBody.classList.remove('scale-95');
             fabricPlate.classList.remove('bg-pink-500/40');
             targetPressure = 0; 
         }
@@ -782,9 +653,6 @@
             resetChallenge();
             isPlaying = true;
             startTime = Date.now();
-            ambientWarning.textContent = "干預中！保持雙參數皆落在標靶區（綠色區段）...";
-            ambientWarning.className = "absolute bottom-4 left-4 right-4 text-center px-3 py-1.5 rounded bg-orange-950/40 border border-orange-500/30 text-xs text-orange-400 font-semibold pointer-events-none transition-all duration-300";
-            
             gameTimer = setInterval(tick, 100);
             requestAnimationFrame(drawWave);
         }
@@ -792,32 +660,13 @@
         function resetChallenge() {
             clearInterval(gameTimer);
             isPlaying = false;
-            elapsed = 0;
-            perfectTicks = 0;
-            totalTicks = 0;
-            sumPressure = 0;
-            sumBpm = 0;
-            clickTimes = [];
-            bpm = 0;
-            pressure = 0;
-            targetPressure = 0;
-            timerDisplay.textContent = "20.0s";
-            scoreDisplay.textContent = "0.0%";
+            perfectTicks = 0; totalTicks = 0; sumPressure = 0; sumBpm = 0; clickTimes = []; bpm = 0; pressure = 0; targetPressure = 0;
+            timerDisplay.textContent = "20.0s"; scoreDisplay.textContent = "0.0%";
             resultsScreen.classList.add('translate-y-full');
-            
-            // 恢復上傳按鈕狀態
-            submitScoreBtn.disabled = false;
-            submitScoreBtn.textContent = "提交排行";
-            submitScoreBtn.className = "px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-colors";
+            submitScoreBtn.disabled = false; submitScoreBtn.textContent = "上傳排行";
             document.getElementById('submissionArea').classList.remove('hidden');
             playerNameInput.value = "";
-
             updateBiochemicalBars(0, 0, 0, 0);
-            metabolicActivity.textContent = "靜止狀態";
-            metabolicActivity.className = "text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400";
-            glucoseStatusText.textContent = "待定：等候 SOP 標準干預";
-            glucoseParticles.innerHTML = "";
-
             mouseSkin.setAttribute('fill', '#475569');
             mouseHead.setAttribute('fill', '#475569');
         }
@@ -827,58 +676,46 @@
             elapsed = now - startTime;
             let remaining = (GAME_DURATION - elapsed) / 1000;
             
-            if (remaining <= 0) {
-                remaining = 0;
-                endChallenge();
-            }
-
+            if (remaining <= 0) { remaining = 0; endChallenge(); }
             timerDisplay.textContent = `${remaining.toFixed(1)}s`;
 
-            // 生物組織的黏彈性（Viscoelasticity）與回彈延遲
-            const decaySpeed = (bpm > 80) ? 0.08 : 0.25; 
-            const easing = pointerDown ? 0.25 : decaySpeed;
+            // 【肌肉組織黏彈性延遲物理演算法】高頻率下衰減放慢，使壓力波形能維持在黃金範圍內
+            const decaySpeed = (bpm > 85) ? 0.08 : 0.28; 
+            const easing = pointerDown ? 0.28 : decaySpeed;
             pressure += (targetPressure - pressure) * easing;
             if (pressure < 0.01) pressure = 0;
 
-            totalTicks++;
-            sumPressure += pressure;
-            sumBpm += bpm;
-
+            totalTicks++; sumPressure += pressure; sumBpm += bpm;
             pressureVal.textContent = pressure.toFixed(2);
             pressureBar.style.width = `${Math.min((pressure / 0.5) * 100, 100)}%`;
             
-            if (clickTimes.length > 0 && (now - clickTimes[clickTimes.length - 1] > 1500)) {
-                bpm = Math.max(0, bpm - 12);
+            if (clickTimes.length > 0 && (now - clickTimes[clickTimes.length - 1] > 1200)) {
+                bpm = Math.max(0, bpm - 15);
             }
             bpmVal.textContent = Math.round(bpm);
             bpmBar.style.width = `${Math.min((bpm / 200) * 100, 100)}%`;
 
             const pressureIdeal = (pressure >= 0.10 && pressure <= 0.30);
             const bpmIdeal = (bpm >= 100 && bpm <= 120);
-
-            if (pressureIdeal && bpmIdeal) {
-                perfectTicks++;
-            }
+            if (pressureIdeal && bpmIdeal) perfectTicks++;
 
             const consistencyScore = (perfectTicks / totalTicks) * 100;
             scoreDisplay.textContent = `${consistencyScore.toFixed(1)}%`;
 
-            animateBiochemicalCascades(pressureIdeal, bpmIdeal, consistencyScore);
+            animateBiochemicalCascades(pressureIdeal, bpmIdeal);
 
             if (pressure > 0.40) {
-                mouseSkin.setAttribute('fill', '#4a3250'); 
-                mouseHead.setAttribute('fill', '#4a3250');
-                ambientWarning.textContent = "⚠ 警告：施按壓力道過重！小鼠血液循環受阻！";
-                ambientWarning.className = "absolute bottom-4 left-4 right-4 text-center px-3 py-1.5 rounded bg-rose-950/80 border border-rose-500/50 text-xs text-rose-300 font-bold pointer-events-none animate-bounce";
+                mouseSkin.setAttribute('fill', '#4a3250'); mouseHead.setAttribute('fill', '#4a3250');
+                ambientWarning.textContent = "⚠ 警告：力道過重！小鼠發紺窒息中！";
+                ambientWarning.className = "absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-rose-950/80 border border-rose-500/50 text-[10px] text-rose-300 font-bold pointer-events-none";
             } else {
-                mouseSkin.setAttribute('fill', '#475569');
-                mouseHead.setAttribute('fill', '#475569');
+                mouseSkin.setAttribute('fill', '#475569'); mouseHead.setAttribute('fill', '#475569');
                 if (pressureIdeal && bpmIdeal) {
-                    ambientWarning.textContent = "🎯 優良！壓力和頻率均保持在標準區間內！";
-                    ambientWarning.className = "absolute bottom-4 left-4 right-4 text-center px-3 py-1.5 rounded bg-emerald-950/40 border border-emerald-500/50 text-xs text-emerald-400 font-bold pointer-events-none";
+                    ambientWarning.textContent = "🎯 優良！壓力和頻率均在標準標靶內！";
+                    ambientWarning.className = "absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-emerald-950/40 border border-emerald-500/50 text-[10px] text-emerald-400 font-bold pointer-events-none";
                 } else if (isPlaying) {
-                    ambientWarning.textContent = "調整頻率與力度：使下方兩個指標維持綠色區段";
-                    ambientWarning.className = "absolute bottom-4 left-4 right-4 text-center px-3 py-1.5 rounded bg-slate-900/90 border border-slate-800 text-xs text-slate-400 pointer-events-none";
+                    ambientWarning.textContent = "維持雙指標在中央綠色標準區間...";
+                    ambientWarning.className = "absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 pointer-events-none";
                 }
             }
         }
@@ -886,204 +723,104 @@
         function evaluateBPM() {
             const now = Date.now();
             clickTimes = clickTimes.filter(t => (now - t) < 3000);
-
-            if (clickTimes.length < 2) {
-                bpm = 0;
-                return;
-            }
-
+            if (clickTimes.length < 2) { bpm = 0; return; }
             let totalInterval = 0;
-            for (let i = 1; i < clickTimes.length; i++) {
-                totalInterval += (clickTimes[i] - clickTimes[i-1]);
-            }
-            const avgInterval = totalInterval / (clickTimes.length - 1); 
-            bpm = 60000 / avgInterval; 
+            for (let i = 1; i < clickTimes.length; i++) totalInterval += (clickTimes[i] - clickTimes[i-1]);
+            bpm = 60000 / (totalInterval / (clickTimes.length - 1)); 
         }
 
         let irsValue = 0, pi3kValue = 0, aktValue = 0, glut4Value = 0;
-        function animateBiochemicalCascades(pressureIdeal, bpmIdeal, score) {
-            const decay = 0.5;
-            const growth = 2.5;
-
+        function animateBiochemicalCascades(pressureIdeal, bpmIdeal) {
             if (pressureIdeal && bpmIdeal) {
-                irsValue = Math.min(100, irsValue + growth);
-                if (irsValue > 40) pi3kValue = Math.min(100, pi3kValue + growth);
-                if (pi3kValue > 50) aktValue = Math.min(100, aktValue + growth);
-                if (aktValue > 60) glut4Value = Math.min(100, glut4Value + growth);
+                irsValue = Math.min(100, irsValue + 3);
+                if (irsValue > 40) pi3kValue = Math.min(100, pi3kValue + 3);
+                if (pi3kValue > 50) aktValue = Math.min(100, aktValue + 3);
+                if (aktValue > 60) glut4Value = Math.min(100, glut4Value + 3);
             } else {
-                irsValue = Math.max(0, irsValue - decay);
-                pi3kValue = Math.max(0, pi3kValue - decay);
-                aktValue = Math.max(0, aktValue - decay);
-                glut4Value = Math.max(0, glut4Value - decay);
+                irsValue = Math.max(0, irsValue - 0.4); pi3kValue = Math.max(0, pi3kValue - 0.4);
+                aktValue = Math.max(0, aktValue - 0.4); glut4Value = Math.max(0, glut4Value - 0.4);
             }
 
             updateBiochemicalBars(irsValue, pi3kValue, aktValue, glut4Value);
 
             if (glut4Value > 70) {
-                metabolicActivity.textContent = "核心糖脂代謝高度活化！";
-                metabolicActivity.className = "text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                glucoseStatusText.innerHTML = "<span class='text-emerald-400 font-bold'>大量攝取！</span><br>GLUT4 轉位帶動糖代謝";
+                metabolicActivity.textContent = "糖脂代謝高度活化！";
+                metabolicActivity.className = "text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                glucoseStatusText.innerHTML = "<span class='text-emerald-400 font-bold'>大量攝取！</span>";
                 spawnGlucoseParticles(true);
             } else if (irsValue > 20) {
-                metabolicActivity.textContent = "胰島素受體通路上調中...";
-                metabolicActivity.className = "text-xs font-semibold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30";
-                glucoseStatusText.textContent = "準備狀態：通道逐步開啟";
-                spawnGlucoseParticles(false);
+                metabolicActivity.textContent = "通路激活中...";
+                metabolicActivity.className = "text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30";
+                glucoseStatusText.textContent = "通道開啟中";
             } else {
                 metabolicActivity.textContent = "靜止狀態";
-                metabolicActivity.className = "text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400";
-                glucoseStatusText.textContent = "待定：等候 SOP 標準干預";
-                spawnGlucoseParticles(false);
+                metabolicActivity.className = "text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400";
+                glucoseStatusText.textContent = "等候標準干預";
             }
         }
 
         function updateBiochemicalBars(irs, pi3k, akt, glut4) {
-            irsBar.style.width = `${irs}%`;
-            irsPct.textContent = `${Math.round(irs)}%`;
-            pi3kBar.style.width = `${pi3k}%`;
-            pi3kPct.textContent = `${Math.round(pi3k)}%`;
-            aktBar.style.width = `${akt}%`;
-            aktPct.textContent = `${Math.round(akt)}%`;
-            glut4Bar.style.width = `${glut4}%`;
-            glut4Pct.textContent = `${Math.round(glut4)}%`;
+            irsBar.style.width = `${irs}%`; irsPct.textContent = `${Math.round(irs)}%`;
+            pi3kBar.style.width = `${pi3k}%`; pi3kPct.textContent = `${Math.round(pi3k)}%`;
+            aktBar.style.width = `${akt}%`; aktPct.textContent = `${Math.round(akt)}%`;
+            glut4Bar.style.width = `${glut4}%`; glut4Pct.textContent = `${Math.round(glut4)}%`;
         }
 
         function spawnGlucoseParticles(active) {
-            if (!active) {
-                if (Math.random() < 0.1 && glucoseParticles.children.length > 0) {
-                    glucoseParticles.removeChild(glucoseParticles.firstElementChild);
-                }
-                return;
-            }
-
-            if (glucoseParticles.children.length < 8 && Math.random() < 0.4) {
+            if (!active) return;
+            if (glucoseParticles.children.length < 6 && Math.random() < 0.4) {
                 const dot = document.createElement('div');
-                dot.className = "w-2 h-2 rounded-full bg-amber-400 shadow shadow-amber-400/50 animate-ping absolute transition-all duration-1000";
-                dot.style.top = `${Math.random() * 32 + 8}px`;
-                dot.style.left = `0px`;
-                
+                dot.className = "w-1.5 h-1.5 rounded-full bg-amber-400 absolute transition-all duration-700";
+                dot.style.top = `${Math.random() * 16 + 4}px`; dot.style.left = `0px`;
                 glucoseParticles.appendChild(dot);
-                
                 setTimeout(() => {
-                    dot.style.left = `80%`;
-                    dot.style.opacity = '0.3';
-                    setTimeout(() => {
-                        if (dot.parentElement === glucoseParticles) {
-                            glucoseParticles.removeChild(dot);
-                        }
-                    }, 1000);
-                }, 50);
+                    dot.style.left = `85%`; dot.style.opacity = '0.2';
+                    setTimeout(() => { if (dot.parentElement) glucoseParticles.removeChild(dot); }, 700);
+                }, 40);
             }
         }
 
         function drawWave() {
             if (!isPlaying && pressure === 0) return;
-
-            waveHistory.shift();
-            waveHistory.push(pressure);
-
+            waveHistory.shift(); waveHistory.push(pressure);
             ctx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
-
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = 1;
-            for (let i = 0; i < waveCanvas.height; i += 24) {
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(waveCanvas.width, i);
-                ctx.stroke();
-            }
 
             const yMax = waveCanvas.height - (0.3 / 0.5) * waveCanvas.height;
             const yMin = waveCanvas.height - (0.1 / 0.5) * waveCanvas.height;
             ctx.fillStyle = 'rgba(16, 185, 129, 0.08)';
             ctx.fillRect(0, yMax, waveCanvas.width, yMin - yMax);
 
-            ctx.strokeStyle = 'rgba(16, 185, 129, 0.2)';
-            ctx.setLineDash([4, 4]);
-            ctx.beginPath();
-            ctx.moveTo(0, yMax); ctx.lineTo(waveCanvas.width, yMax);
-            ctx.moveTo(0, yMin); ctx.lineTo(waveCanvas.width, yMin);
-            ctx.stroke();
-            ctx.setLineDash([]); 
-
             ctx.strokeStyle = pressure > 0.40 ? '#f43f5e' : '#f97316';
-            ctx.lineWidth = 2;
-            ctx.shadowBlur = 4;
-            ctx.shadowColor = pressure > 0.40 ? 'rgba(244, 63, 94, 0.5)' : 'rgba(249, 115, 22, 0.5)';
-            ctx.beginPath();
-
+            ctx.lineWidth = 1.5; ctx.beginPath();
             const step = waveCanvas.width / (waveHistory.length - 1);
             for (let i = 0; i < waveHistory.length; i++) {
-                const normalizedPressure = Math.min(waveHistory[i] / 0.5, 1.0);
-                const x = i * step;
-                const y = waveCanvas.height - normalizedPressure * waveCanvas.height;
-
-                if (i === 0) {
-                    ctx.moveTo(x, y);
-                } else {
-                    ctx.lineTo(x, y);
-                }
+                const y = waveCanvas.height - Math.min(waveHistory[i] / 0.5, 1.0) * waveCanvas.height;
+                if (i === 0) ctx.moveTo(i * step, y); else ctx.lineTo(i * step, y);
             }
             ctx.stroke();
-            ctx.shadowBlur = 0; 
-
             requestAnimationFrame(drawWave);
         }
 
         function endChallenge() {
-            clearInterval(gameTimer);
-            isPlaying = false;
-            pointerDown = false;
-            targetPressure = 0;
-
+            clearInterval(gameTimer); isPlaying = false; pointerDown = false; targetPressure = 0;
             const finalScore = (perfectTicks / totalTicks) * 100;
-            const avgPressure = sumPressure / totalTicks;
-            const avgBPM = sumBpm / totalTicks;
-
-            document.getElementById('avgPressureVal').textContent = `${avgPressure.toFixed(2)} N/cm²`;
-            document.getElementById('avgBPMVal').textContent = `${Math.round(avgBPM)} BPM`;
+            document.getElementById('avgPressureVal').textContent = `${(sumPressure / totalTicks).toFixed(2)}`;
+            document.getElementById('avgBPMVal').textContent = `${Math.round(sumBpm / totalTicks)}`;
             document.getElementById('finalScoreVal').textContent = `${finalScore.toFixed(1)}%`;
 
-            let title = "";
-            let desc = "";
+            if (finalScore >= 80) document.getElementById('resultTitle').textContent = "🥇 首席方法學專家";
+            else if (finalScore >= 55) document.getElementById('resultTitle').textContent = "🥈 實驗室手感流大師";
+            else document.getElementById('resultTitle').textContent = "🥉 標準化實習助理";
 
-            if (finalScore >= 85) {
-                title = "🥇 首席方法標準化專家";
-                desc = "無懈可擊！您展現了驚人的控壓與控頻能力，手法變異極小，完美實踐了 Quality by Design (QbD) 的標準化概念，有能力制定下一代實驗室操作規範！";
-            } else if (finalScore >= 60) {
-                title = "🥈 實驗室手感流大師";
-                desc = "非常優秀！您的力道與頻率控制多數時間都在標靶綠色區間內，足以保證小鼠肝臟 PI3K/AKT/GLUT4 機制順暢活化，數據具有高度學術可靠度！";
-            } else if (finalScore >= 35) {
-                title = "🥉 標準化實習助理";
-                desc = "還差一點點！您的力道有時過重（小心小鼠發紺喔！）或頻率稍慢。建議多使用 FPS 反饋感測器進行「適應性減壓訓練」，下一次一定能更穩！";
-            } else {
-                title = "🚨 代謝數據破壞者";
-                desc = "操作變異極高！您的手法可能導致高偏差實驗結果。別灰心！這正是此文獻為何要開發『標準化固定座』的原因，再看一次 Protocol 並加油挑戰！";
-            }
-
-            document.getElementById('resultTitle').textContent = title;
-            document.getElementById('resultDesc').textContent = desc;
             resultsScreen.classList.remove('translate-y-full');
-            ambientWarning.textContent = "挑戰結束！已生成方法學評量報告。";
-            ambientWarning.className = "absolute bottom-4 left-4 right-4 text-center px-3 py-1.5 rounded bg-slate-900 border border-slate-800 text-xs text-slate-400 pointer-events-none transition-all duration-300";
         }
 
-        // Custom Toast
         function showToast(message, type = 'info') {
             toastText.textContent = message;
-            if (type === 'success') {
-                toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-0 opacity-100 transition-all duration-300 px-4 py-2.5 rounded-lg bg-slate-900 border border-emerald-500/30 text-emerald-400 text-xs flex items-center gap-2 shadow-2xl pointer-events-auto";
-                toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
-            } else {
-                toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-0 opacity-100 transition-all duration-300 px-4 py-2.5 rounded-lg bg-slate-900 border border-indigo-500/30 text-indigo-400 text-xs flex items-center gap-2 shadow-2xl pointer-events-auto";
-                toastIcon.className = "fa-solid fa-circle-info text-indigo-400";
-            }
-            setTimeout(() => {
-                toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 transition-all duration-300 px-4 py-2.5 rounded-lg bg-slate-900 border text-xs flex items-center gap-2 shadow-xl pointer-events-none";
-            }, 3500);
+            toast.className = `fixed bottom-4 right-4 z-50 transform translate-y-0 opacity-100 transition-all duration-300 px-3 py-2 rounded-lg bg-slate-900 border text-xs flex items-center gap-2 shadow-2xl ${type === 'success' ? 'border-emerald-500/30 text-emerald-400' : 'border-indigo-500/30 text-indigo-400'}`;
+            setTimeout(() => { toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 pointer-events-none"; }, 3000);
         }
 
-        // --- 5. 啟動 Firebase 連線 ---
         initFirebase();
     </script>
 </body>
