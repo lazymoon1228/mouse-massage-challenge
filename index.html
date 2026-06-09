@@ -416,6 +416,7 @@
     <script>
         const GAME_DURATION = 20000; 
         let isPlaying = false;
+        let gameEnded = false;
         let gameTimer = null;
         let startTime = null;
         let elapsed = 0;
@@ -598,6 +599,9 @@
 
         // 🌟 核心修復：使用滑鼠與觸控完全相容的事件觸發機制
         function pressStart(clientX, clientY) {
+            // 避免結束畫面時誤觸直接重新開始
+            if (gameEnded || resultsScreen.classList.contains('translate-y-full') === false) return;
+
             if (!isPlaying) startChallenge();
 
             const rect = tapArea.getBoundingClientRect();
@@ -633,6 +637,7 @@
 
         function startChallenge() {
             if (isPlaying) return;
+            gameEnded = false;
             resetChallenge();
             isPlaying = true;
             startTime = Date.now();
@@ -642,6 +647,7 @@
 
         function resetChallenge() {
             clearInterval(gameTimer);
+            gameEnded = false;
             isPlaying = false;
             perfectTicks = 0; totalTicks = 0; sumPressure = 0; sumBpm = 0; clickTimes = []; bpm = 0; pressure = 0; targetPressure = 0;
             timerDisplay.textContent = "20.0s"; scoreDisplay.textContent = "0.0%";
@@ -772,6 +778,7 @@
         function endChallenge() {
             clearInterval(gameTimer);
             isPlaying = false;
+            gameEnded = true;
             pointerDown = false;
             targetPressure = 0;
 
