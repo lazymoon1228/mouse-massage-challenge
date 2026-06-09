@@ -12,14 +12,12 @@
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=PingFang+TC:wght@400;600;700&display=swap');
         body {
             font-family: 'PingFang TC', sans-serif;
-            /* 防止手機拉動網頁時出現彈簧橡皮筋效果，干擾連續點擊 */
             overscroll-behavior-y: contain;
             -webkit-tap-highlight-color: transparent;
         }
         .mono-font {
             font-family: 'JetBrains Mono', monospace;
         }
-        /* 美化滾動條 */
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -30,7 +28,6 @@
             background: #475569;
             border-radius: 2px;
         }
-        /* 限制手機連續點擊時的文字誤選 */
         .no-select {
             -webkit-user-select: none;
             user-select: none;
@@ -48,7 +45,7 @@
                 </div>
                 <div>
                     <h1 class="text-sm md:text-lg font-bold text-slate-100 tracking-wide leading-tight">小鼠腹部按摩定量挑戰</h1>
-                    <p class="text-[10px] text-slate-400">JoVE (2025) e68226 · 方法標準化研究</p>
+                    <p class="text-[10px] text-slate-400">JoVE (2025) e68226 · 方法標準化研究[cite: 1]</p>
                 </div>
             </div>
             <div class="flex items-center gap-1.5">
@@ -59,7 +56,7 @@
         </div>
     </header>
 
-    <!-- Main Dashboard Container (手機改為單欄上下流向) -->
+    <!-- Main Dashboard Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-3 py-4 grid grid-cols-1 lg:grid-cols-12 gap-4">
         
         <!-- Simulator Console (7/12) -->
@@ -87,7 +84,7 @@
                     </div>
                 </div>
 
-                <!-- 🚀 【手機版核心優化】即時儀表看板上移至小鼠上方，防止被手指擋住 -->
+                <!-- 頂部即時儀表看板 -->
                 <div class="grid grid-cols-2 gap-3 bg-slate-950 p-2.5 border border-slate-800/60 rounded-xl">
                     <!-- Pressure Gauge -->
                     <div class="flex flex-col gap-0.5">
@@ -121,18 +118,15 @@
                     </div>
                 </div>
 
-                <!-- Simulation Interactive Area (手機端等比例自適應高度) -->
+                <!-- Simulation Interactive Area -->
                 <div class="relative bg-slate-950 border border-slate-800/80 rounded-xl p-4 h-64 flex flex-col items-center justify-center overflow-hidden">
                     
-                    <!-- Mouse & Fixation Plate Graphic Box -->
+                    <!-- Mouse Graphic Box -->
                     <div id="mousePlate" class="relative w-full max-w-[260px] h-36 flex items-center justify-center transform scale-95 md:scale-100 transition-all">
-                        <!-- PP Trapezoidal Fixation Plate -->
                         <div class="absolute w-full h-28 border-2 border-slate-700/60 bg-slate-900/30 rounded-lg transform skew-x-2 shadow-inner flex items-center justify-center">
-                            <!-- Soft Fabric Pink Cover Layer -->
                             <div id="fabricPlate" class="absolute w-[80%] h-20 bg-pink-500/20 border border-pink-500/30 rounded-full transition-colors duration-300"></div>
                         </div>
 
-                        <!-- Mouse SVG Body -->
                         <div id="mouseBody" class="relative z-10 w-[75%] h-14 transition-all duration-200">
                             <svg viewBox="0 0 200 80" class="w-full h-full drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
                                 <path d="M 20 40 Q 5 25 15 15" fill="none" stroke="#f43f5e" stroke-width="2" stroke-linecap="round" />
@@ -156,17 +150,17 @@
                         </div>
                     </div>
 
-                    <!-- Tactile Tap Area Layer Overlay -->
-                    <div id="tapArea" class="absolute inset-0 cursor-pointer z-30 flex items-center justify-center">
-                        <div id="rippleRing" class="absolute w-16 h-16 rounded-full border border-orange-500/0 scale-50 opacity-0 transition-all duration-300 pointer-events-none"></div>
+                    <!-- 【優化】核心觸控與滑鼠感應層 -->
+                    <div id="tapArea" class="absolute inset-0 cursor-pointer z-30 flex items-center justify-center bg-transparent">
+                        <div id="rippleRing" class="absolute w-16 h-16 rounded-full border border-orange-500/0 scale-50 opacity-0 pointer-events-none"></div>
                     </div>
 
-                    <!-- Ambient Alert Message Overlay -->
-                    <div id="ambientWarning" class="absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 pointer-events-none transition-all duration-300">
+                    <!-- Alert Banner -->
+                    <div id="ambientWarning" class="absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 pointer-events-none">
                         規律輕點/觸控小鼠腹部靶區開始操作
                     </div>
 
-                    <!-- Simulation Complete Banner -->
+                    <!-- Results Screen -->
                     <div id="resultsScreen" class="absolute inset-0 bg-slate-950/98 z-40 flex flex-col items-center justify-center gap-3 transition-all duration-300 translate-y-full px-4">
                         <div class="text-center">
                             <div class="text-[9px] text-slate-400 uppercase tracking-wider mb-0.5">評估報告</div>
@@ -188,7 +182,7 @@
                             </div>
                         </div>
                         
-                        <!-- Leaderboard Submission Area -->
+                        <!-- Submission Area -->
                         <div id="submissionArea" class="w-full max-w-xs flex flex-col gap-2 px-2">
                             <div class="flex gap-2">
                                 <input id="playerNameInput" type="text" maxlength="10" placeholder="輸入研究員代號..." class="flex-1 px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-100 text-center focus:outline-none focus:border-orange-500">
@@ -203,176 +197,126 @@
                                 重新挑戰
                             </button>
                             <button id="shareScoreBtn" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-semibold text-xs transition-colors border border-slate-700">
-                                複製研究評級
+                                複製成果
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Realtime FPS Waveform Monitor -->
+            <!-- Waveform Monitor -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-2">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-1.5">
-                        <span class="p-1 bg-indigo-500/10 text-indigo-400 rounded text-xs">
-                            <i class="fa-solid fa-wave-square"></i>
-                        </span>
-                        <h2 class="text-xs font-bold text-slate-100">FPS 感測系統即時波形圖</h2>
-                    </div>
-                </div>
+                <div class="text-xs font-bold text-slate-100">FPS 感測系統即時波形圖</div>
                 <div class="bg-slate-950 rounded-lg p-1.5 border border-slate-800">
                     <canvas id="waveCanvas" class="w-full h-16 bg-slate-950 rounded"></canvas>
                 </div>
             </div>
         </section>
 
-        <!-- Right Column: Pathway & Leaderboard Tabs (5/12) -->
+        <!-- Right Column -->
         <section class="lg:col-span-5 flex flex-col gap-4">
-            
-            <!-- Dual Tab Selector -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-3 flex-1">
                 <div class="flex border-b border-slate-800 text-xs">
-                    <button id="tabMechanismBtn" class="flex-1 pb-2.5 font-bold text-orange-400 border-b-2 border-orange-500 transition-all focus:outline-none">
+                    <button id="tabMechanismBtn" class="flex-1 pb-2.5 font-bold text-orange-400 border-b-2 border-orange-500 focus:outline-none">
                         <i class="fa-solid fa-dna mr-1"></i>分子機制
                     </button>
-                    <button id="tabLeaderboardBtn" class="flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all focus:outline-none">
+                    <button id="tabLeaderboardBtn" class="flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 focus:outline-none">
                         <i class="fa-solid fa-trophy mr-1"></i>實驗室排行榜
                     </button>
                 </div>
 
-                <!-- Tab Content 1: Mechanism -->
+                <!-- Content 1: Mechanism -->
                 <div id="tabMechanism" class="flex flex-col gap-3 flex-1">
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] text-slate-400 font-semibold">通路狀態</span>
-                        <span id="metabolicActivity" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">
-                            靜止狀態
-                        </span>
+                        <span id="metabolicActivity" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400">靜止狀態</span>
                     </div>
 
-                    <!-- Molecular Cascade Interactive Animation -->
                     <div class="flex-1 bg-slate-950 border border-slate-800/80 rounded-xl p-3 flex flex-col gap-3 justify-between min-h-[240px]">
-                        <!-- IRS-1 -->
                         <div class="relative flex flex-col gap-0.5">
-                            <div class="flex justify-between items-center text-[11px]">
-                                <span class="font-semibold text-slate-300">1. IRS-1/2 酪氨酸磷酸化</span>
-                                <span id="irsPct" class="mono-font text-slate-400 text-[9px]">0%</span>
-                            </div>
-                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-                                <div id="irsBar" class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-300" style="width: 0%"></div>
-                            </div>
+                            <div class="flex justify-between items-center text-[11px]"><span class="font-semibold text-slate-300">1. IRS-1/2 酪氨酸磷酸化</span><span id="irsPct" class="mono-font text-[9px]">0%</span></div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div id="irsBar" class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400" style="width: 0%"></div></div>
                         </div>
-
-                        <!-- PI3K -->
                         <div class="relative flex flex-col gap-0.5">
-                            <div class="flex justify-between items-center text-[11px]">
-                                <span class="font-semibold text-slate-300">2. PI3K 磷脂酰肌醇激酶活化</span>
-                                <span id="pi3kPct" class="mono-font text-slate-400 text-[9px]">0%</span>
-                            </div>
-                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-                                <div id="pi3kBar" class="h-full bg-gradient-to-r from-teal-600 to-teal-400 transition-all duration-300" style="width: 0%"></div>
-                            </div>
+                            <div class="flex justify-between items-center text-[11px]"><span class="font-semibold text-slate-300">2. PI3K 磷脂酰肌醇激酶活化</span><span id="pi3kPct" class="mono-font text-[9px]">0%</span></div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div id="pi3kBar" class="h-full bg-gradient-to-r from-teal-600 to-teal-400" style="width: 0%"></div></div>
                         </div>
-
-                        <!-- AKT -->
                         <div class="relative flex flex-col gap-0.5">
-                            <div class="flex justify-between items-center text-[11px]">
-                                <span class="font-semibold text-slate-300">3. AKT 蛋白激酶 B 磷酸化</span>
-                                <span id="aktPct" class="mono-font text-slate-400 text-[9px]">0%</span>
-                            </div>
-                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-                                <div id="aktBar" class="h-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-300" style="width: 0%"></div>
-                            </div>
+                            <div class="flex justify-between items-center text-[11px]"><span class="font-semibold text-slate-300">3. AKT 蛋白激酶 B 磷酸化</span><span id="aktPct" class="mono-font text-[9px]">0%</span></div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div id="aktBar" class="h-full bg-gradient-to-r from-cyan-600 to-cyan-400" style="width: 0%"></div></div>
                         </div>
-
-                        <!-- GLUT4 -->
                         <div class="relative flex flex-col gap-0.5">
-                            <div class="flex justify-between items-center text-[11px]">
-                                <span class="font-semibold text-slate-300">4. GLUT4 葡萄糖轉運體轉位</span>
-                                <span id="glut4Pct" class="mono-font text-slate-400 text-[9px]">0%</span>
-                            </div>
-                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-                                <div id="glut4Bar" class="h-full bg-gradient-to-r from-amber-600 to-amber-400 transition-all duration-300" style="width: 0%"></div>
-                            </div>
+                            <div class="flex justify-between items-center text-[11px]"><span class="font-semibold text-slate-300">4. GLUT4 葡萄糖轉運體轉位</span><span id="glut4Pct" class="mono-font text-[9px]">0%</span></div>
+                            <div class="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden"><div id="glut4Bar" class="h-full bg-gradient-to-r from-amber-600 to-amber-400" style="width: 0%"></div></div>
                         </div>
-
-                        <!-- Micro-Animation Panel -->
                         <div class="border-t border-slate-800 pt-2 flex items-center justify-between gap-2">
-                            <div class="text-[9px] text-slate-400 leading-tight max-w-[110px]">
-                                <span class="block font-semibold text-slate-300">葡萄糖攝取狀態</span>
-                                <span id="glucoseStatusText" class="text-[8px]">等候 SOP 標準干預</span>
-                            </div>
+                            <div class="text-[9px] text-slate-400 leading-tight"><span class="block font-semibold text-slate-300">葡萄糖攝取狀態</span><span id="glucoseStatusText" class="text-[8px]">等候 SOP 標準干預</span></div>
                             <div class="relative flex-1 h-8 bg-slate-900 rounded-lg border border-slate-800 overflow-hidden flex items-center justify-around px-2">
                                 <div class="absolute right-2 top-0 bottom-0 w-0.5 bg-amber-500/40 rounded-full"></div>
-                                <div id="glucoseParticles" class="flex gap-1 w-full justify-start z-10 transition-all duration-300"></div>
+                                <div id="glucoseParticles" class="flex gap-1 w-full justify-start z-10"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tab Content 2: Leaderboard -->
+                <!-- Content 2: Leaderboard -->
                 <div id="tabLeaderboard" class="hidden flex flex-col gap-2 flex-1">
                     <div class="flex items-center justify-between text-[10px] text-slate-400">
-                        <span>本校/實驗室即時數據</span>
-                        <span id="syncStatus" class="text-[9px] text-emerald-400 flex items-center gap-1">
-                            <i class="fa-solid fa-cloud"></i>已即時雲端同步
-                        </span>
+                        <span>實驗室即時同步數據</span>
+                        <span id="syncStatus" class="text-[9px] text-slate-400 flex items-center gap-1"><i class="fa-solid fa-cloud"></i>載入中...</span>
                     </div>
-
-                    <!-- Ranking List Scroll Box -->
                     <div class="flex-1 bg-slate-950 border border-slate-800/80 rounded-xl p-2 flex flex-col gap-1.5 overflow-y-auto max-h-[260px] min-h-[220px]" id="leaderboardList">
-                        <div class="text-center text-slate-500 text-xs py-6">排行榜載入中...</div>
+                        <div class="text-center text-slate-500 text-xs py-6">無資料</div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Help Modal Window -->
+    <!-- Help Modal -->
     <div id="helpModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
         <div class="bg-slate-900 border border-slate-800 rounded-xl max-w-sm w-full p-5 shadow-2xl flex flex-col gap-3 transform scale-95 transition-transform duration-300">
             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                <h3 class="text-xs font-bold text-slate-100 flex items-center gap-1.5">
-                    <i class="fa-solid fa-circle-info text-orange-400"></i>
-                    小鼠按摩定量挑戰說明
-                </h3>
-                <button id="closeHelpBtn" class="text-slate-400 hover:text-white p-1">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <h3 class="text-xs font-bold text-slate-100 flex items-center gap-1.5">小鼠按摩定量挑戰說明</h3>
+                <button id="closeHelpBtn" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="text-[11px] text-slate-300 space-y-2 leading-relaxed">
-                <p>本模擬挑戰依據 <strong>JoVE (2025) e68226</strong> 論文原型開發[cite: 1]。</p>
-                <p class="font-semibold text-orange-400">【手機操作密技】</p>
+                <p>本挑戰依據 <strong>JoVE (2025) e68226</strong> 論文開發[cite: 1]。</p>
+                <p class="font-semibold text-orange-400">【操作指引】</p>
                 <ul class="list-disc list-inside space-y-1 bg-slate-950 p-2 rounded border border-slate-800">
-                    <li>用手指像打節拍一樣，<strong>以每秒約 2 下的速度規律輕點</strong>小鼠肚子（神闕穴四周）[cite: 1]。</li>
-                    <li>本系統內建<strong>組織黏彈性物理延遲</strong>。只要保持連續輕點，上方壓力計便會平滑穩定維持，不需要死命按著不放！</li>
-                    <li><strong>頻率:100-120 BPM</strong> 與 <strong>壓力:0.1-0.3 N/cm²</strong> 同時符合即可活化通路[cite: 1]！</li>
+                    <li>滑鼠點擊或手指輕點小鼠肚子（神闕穴周圍）[cite: 1]。</li>
+                    <li><strong>以每秒約 2 下的速度規律連續輕點</strong>，壓力就會維持，不需要死按著不放。</li>
+                    <li>使壓力（0.1-0.3）與頻率（100-120）同時維持在標準區間以通關[cite: 1]。</li>
                 </ul>
             </div>
-
-            <button id="startPlayBtn" class="w-full py-2 rounded-lg bg-orange-600 hover:bg-orange-500 font-semibold text-xs text-white transition-colors">
-                開始挑戰
-            </button>
+            <button id="startPlayBtn" class="w-full py-2 rounded-lg bg-orange-600 hover:bg-orange-500 font-semibold text-xs text-white">開始挑戰</button>
         </div>
     </div>
 
-    <!-- Alert Toast Box -->
+    <!-- Alert Toast -->
     <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 transition-all duration-300 px-3 py-2 rounded-lg bg-slate-900 border text-[11px] flex items-center gap-1.5 shadow-xl pointer-events-none">
-        <i id="toastIcon" class="fa-solid"></i>
-        <span id="toastText"></span>
+        <i id="toastIcon" class="fa-solid"></i><span id="toastText"></span>
     </div>
 
-    <footer class="border-t border-slate-900 bg-slate-950/80 px-3 py-3 text-center text-[9px] text-slate-500">
-        <span>© 2026 本團隊研究小組 · 符合動物福利 Refinement 原則[cite: 1]</span>
-    </footer>
+    <!-- 🌟 將前端操控腳本與雲端腳本完全隔離獨立，防止加載崩潰 🌟 -->
+    <script>
+        // 全域核心狀態（優先讓本機玩）
+        window.localLeaderboard = JSON.parse(localStorage.getItem('mouse_massage_local_board')) || [
+            { name: "SOP-BOT_01", score: 92.5, avgPressure: 0.20, avgBPM: 110, timestamp: Date.now() - 3600000 },
+            { name: "SOP-BOT_02", score: 81.2, avgPressure: 0.17, avgBPM: 105, timestamp: Date.now() - 7200000 },
+            { name: "助理阿明", score: 65.4, avgPressure: 0.14, avgBPM: 98, timestamp: Date.now() - 10800000 }
+        ];
+        
+        window.cloudSubmitHandler = null; 
+        window.cloudFetchHandler = null;
+    </script>
 
-    <!-- Firebase SDK & Core Game Logic (ES Module) -->
+    <!-- Firebase 加載隔離沙盒 (Try-Catch) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // 內置您綁定好的 Firebase 連線金鑰
         const myFirebaseConfig = {
             apiKey: "AIzaSyDHUJBsTjFiT4kAgfowQtdDw9bPtOAEVSQ",
             authDomain: "mouse-massage-lab.firebaseapp.com",
@@ -382,124 +326,67 @@
             appId: "1:200662761238:web:78047d84a58095bfe0da37"
         };
 
-        let auth, db, user = null;
-        const appId = 'mouse-massage-sim';
-        let isFirebaseActive = false;
+        // 🌟 核心防禦：完全包裹在 try 中，就算失敗也絕對不會卡死本機操作 🌟
+        try {
+            const app = initializeApp(myFirebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
 
-        let localLeaderboard = JSON.parse(localStorage.getItem('mouse_massage_local_board')) || [
-            { name: "SOP-BOT_01", score: 92.5, avgPressure: 0.20, avgBPM: 110, timestamp: Date.now() - 3600000 },
-            { name: "SOP-BOT_02", score: 81.2, avgPressure: 0.17, avgBPM: 105, timestamp: Date.now() - 7200000 },
-            { name: "助理阿明", score: 65.4, avgPressure: 0.14, avgBPM: 98, timestamp: Date.now() - 10800000 }
-        ];
-
-        async function initFirebase() {
-            try {
-                const app = initializeApp(myFirebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-
-                await signInAnonymously(auth);
-
-                onAuthStateChanged(auth, (currentUser) => {
-                    user = currentUser;
+            signInAnonymously(auth).then(() => {
+                onAuthStateChanged(auth, (user) => {
                     if (user) {
-                        isFirebaseActive = true;
-                        document.getElementById('syncStatus').innerHTML = '<i class="fa-solid fa-cloud text-emerald-400"></i>已即時雲端同步';
-                        document.getElementById('syncStatus').className = "text-[10px] text-emerald-400 flex items-center gap-1";
-                        loadCloudLeaderboard();
+                        const syncStatus = document.getElementById('syncStatus');
+                        if(syncStatus) {
+                            syncStatus.innerHTML = '<i class="fa-solid fa-cloud text-emerald-400"></i>已即時雲端同步';
+                            syncStatus.className = "text-[9px] text-emerald-400 flex items-center gap-1";
+                        }
+                        
+                        // 註冊全域資料庫處理函式
+                        window.cloudFetchHandler = async function() {
+                            const leaderboardCol = collection(db, 'artifacts', 'mouse-massage-sim', 'public', 'data', 'leaderboard');
+                            const snapshot = await getDocs(leaderboardCol);
+                            const cloudList = [];
+                            snapshot.forEach(doc => cloudList.push(doc.data()));
+                            cloudList.sort((a, b) => b.score - a.score);
+                            return cloudList;
+                        };
+
+                        window.cloudSubmitHandler = async function(record) {
+                            const leaderboardCol = collection(db, 'artifacts', 'mouse-massage-sim', 'public', 'data', 'leaderboard');
+                            await addDoc(leaderboardCol, record);
+                        };
+
+                        // 首次載入雲端數據
+                        window.cloudFetchHandler().then(list => {
+                            if(window.updateLeaderboardUI) window.updateLeaderboardUI(list);
+                        }).catch(e => console.error("雲端讀取失敗:", e));
                     }
                 });
-            } catch (err) {
-                console.error("Firebase 初始化失敗:", err);
-                updateLeaderboardUI(localLeaderboard);
-                document.getElementById('syncStatus').innerHTML = '<i class="fa-solid fa-cloud-slash text-rose-500"></i>雲端未開通/驗證遭封鎖';
-                document.getElementById('syncStatus').className = "text-[10px] text-rose-500 flex items-center gap-1";
-            }
-        }
-
-        async function loadCloudLeaderboard() {
-            if (!user || !db) return;
-            try {
-                const leaderboardCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
-                const snapshot = await getDocs(leaderboardCol);
-                const cloudList = [];
-                snapshot.forEach(doc => cloudList.push(doc.data()));
-
-                cloudList.sort((a, b) => b.score - a.score);
-                updateLeaderboardUI(cloudList.slice(0, 15));
-            } catch (err) {
-                console.error("載入雲端排行失敗:", err);
-                updateLeaderboardUI(localLeaderboard);
-            }
-        }
-
-        async function submitScoreToDb(name, score, avgPressure, avgBPM) {
-            const newRecord = {
-                name: name.trim() || "匿名科研員",
-                score: parseFloat(score),
-                avgPressure: parseFloat(avgPressure),
-                avgBPM: parseInt(avgBPM),
-                timestamp: Date.now()
-            };
-
-            if (isFirebaseActive && user && db) {
-                try {
-                    const leaderboardCol = collection(db, 'artifacts', appId, 'public', 'data', 'leaderboard');
-                    await addDoc(leaderboardCol, newRecord);
-                    showToast("分數成功上傳至實驗室雲端！", "success");
-                    await loadCloudLeaderboard();
-                } catch (err) {
-                    saveLocalScore(newRecord);
-                }
-            } else {
-                saveLocalScore(newRecord);
-            }
-        }
-
-        function saveLocalScore(record) {
-            localLeaderboard.push(record);
-            localLeaderboard.sort((a, b) => b.score - a.score);
-            localLeaderboard = localLeaderboard.slice(0, 15);
-            localStorage.setItem('mouse_massage_local_board', JSON.stringify(localLeaderboard));
-            showToast("成績成功儲存至本機快取！", "success");
-            updateLeaderboardUI(localLeaderboard);
-        }
-
-        function updateLeaderboardUI(records) {
-            const listContainer = document.getElementById('leaderboardList');
-            if (records.length === 0) {
-                listContainer.innerHTML = '<div class="text-center text-slate-600 text-xs py-6">尚無紀錄</div>';
-                return;
-            }
-
-            let html = '';
-            records.forEach((rec, idx) => {
-                let rankStyle = "bg-slate-900 text-slate-400";
-                let rankIcon = `${idx + 1}`;
-                if (idx === 0) rankStyle = "bg-amber-500/10 text-amber-400 border border-amber-500/30";
-                else if (idx === 1) rankStyle = "bg-slate-400/10 text-slate-300 border border-slate-400/20";
-                else if (idx === 2) rankStyle = "bg-orange-500/10 text-orange-400 border border-orange-500/20";
-
-                html += `
-                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800/40">
-                    <div class="flex items-center gap-2">
-                        <span class="w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold ${rankStyle}">${rankIcon}</span>
-                        <div>
-                            <span class="text-xs font-bold text-slate-200 block">${rec.name}</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-xs font-bold text-emerald-400 mono-font">${rec.score.toFixed(1)}%</div>
-                        <div class="text-[9px] text-slate-500 mono-font">${rec.avgPressure.toFixed(2)}N | ${rec.avgBPM}BPM</div>
-                    </div>
-                </div>`;
+            }).catch(e => {
+                throw new Error("匿名驗證遭拒絕");
             });
-            listContainer.innerHTML = html;
-        }
 
-        // ==========================================
-        //         核心遊戲引擎與黏彈性物理算法
-        // ==========================================
+        } catch (err) {
+            console.warn("[Firebase 沙盒隔離安全防護啟動] 轉為本機完全解鎖模式:", err);
+            setTimeout(() => {
+                const syncStatus = document.getElementById('syncStatus');
+                if(syncStatus) {
+                    syncStatus.innerHTML = '<i class="fa-solid fa-cloud-slash text-amber-500"></i>本機暫存模式';
+                    syncStatus.className = "text-[9px] text-amber-500 flex items-center gap-1";
+                }
+                if(window.updateLeaderboardUI) window.updateLeaderboardUI(window.localLeaderboard);
+            }, 500);
+        }
+    </script>
+
+    <!-- 遊戲主體操控指令碼 (100% 獨立運行，滑鼠點擊絕對不卡死) -->
+    <script>
+        const GAME_DURATION = 20000; 
+        let isPlaying = false;
+        let gameTimer = null;
+        let startTime = null;
+        let elapsed = 0;
+        
         let pressure = 0;
         let targetPressure = 0;
         let clickTimes = [];
@@ -557,7 +444,12 @@
                 tabMechanismBtn.className = "flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 focus:outline-none";
                 tabLeaderboard.classList.remove('hidden');
                 tabMechanism.classList.add('hidden');
-                if (isFirebaseActive) loadCloudLeaderboard();
+                
+                if (window.cloudFetchHandler) {
+                    window.cloudFetchHandler().then(list => updateLeaderboardUI(list)).catch(() => updateLeaderboardUI(window.localLeaderboard));
+                } else {
+                    updateLeaderboardUI(window.localLeaderboard);
+                }
             }
         }
 
@@ -576,25 +468,78 @@
         restartBtn.addEventListener('click', () => { resetChallenge(); startChallenge(); });
         shareScoreBtn.addEventListener('click', () => {
             const finalScore = scoreDisplay.textContent;
-            const textToCopy = `🔬【JoVE小鼠按摩定量挑戰】我獲得了 SOP 一致性得分：${finalScore}！快來手機挑戰精準控壓吧！`;
-            const el = document.createElement('textarea');
-            el.value = textToCopy; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            showToast('已複製成果評級！', 'success');
+            const el = document.createElement('textarea'); el.value = `🔬【JoVE小鼠按摩定量挑戰】我拿到了 ${finalScore} 得分！`;
+            document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            showToast('已複製成果！', 'success');
         });
 
         submitScoreBtn.addEventListener('click', () => {
             const name = playerNameInput.value.trim();
             if (!name) { showToast("請輸入研究員代號！", "info"); return; }
             const score = parseFloat(scoreDisplay.textContent);
+            
+            const record = {
+                name: name,
+                score: score,
+                avgPressure: sumPressure / totalTicks,
+                avgBPM: sumBpm / totalTicks,
+                timestamp: Date.now()
+            };
+
             submitScoreBtn.disabled = true;
             submitScoreBtn.textContent = "上傳中...";
-            submitScoreToDb(name, score, sumPressure / totalTicks, sumBpm / totalTicks).then(() => {
-                setTimeout(() => {
+
+            if (window.cloudSubmitHandler) {
+                window.cloudSubmitHandler(record).then(() => {
+                    showToast("成功上傳至雲端！", "success");
                     switchTab('leaderboard');
                     document.getElementById('submissionArea').classList.add('hidden');
-                }, 600);
-            });
+                }).catch(() => fallbackSave(record));
+            } else {
+                fallbackSave(record);
+            }
         });
+
+        function fallbackSave(record) {
+            window.localLeaderboard.push(record);
+            window.localLeaderboard.sort((a, b) => b.score - a.score);
+            window.localLeaderboard = window.localLeaderboard.slice(0, 15);
+            localStorage.setItem('mouse_massage_local_board', JSON.stringify(window.localLeaderboard));
+            showToast("成功儲存至本機快取！", "success");
+            switchTab('leaderboard');
+            document.getElementById('submissionArea').classList.add('hidden');
+        }
+
+        window.updateLeaderboardUI = function(records) {
+            const listContainer = document.getElementById('leaderboardList');
+            if (!listContainer) return;
+            if (!records || records.length === 0) {
+                listContainer.innerHTML = '<div class="text-center text-slate-600 text-xs py-6">尚無紀錄</div>';
+                return;
+            }
+
+            let html = '';
+            records.forEach((rec, idx) => {
+                let rankStyle = "bg-slate-900 text-slate-400";
+                let rankIcon = `${idx + 1}`;
+                if (idx === 0) rankStyle = "bg-amber-500/10 text-amber-400 border border-amber-500/30";
+                else if (idx === 1) rankStyle = "bg-slate-400/10 text-slate-300 border border-slate-400/20";
+                else if (idx === 2) rankStyle = "bg-orange-500/10 text-orange-400 border border-orange-500/20";
+
+                html += `
+                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-900/60 border border-slate-800/40">
+                    <div class="flex items-center gap-2">
+                        <span class="w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold ${rankStyle}">${rankIcon}</span>
+                        <span class="text-xs font-bold text-slate-200">${rec.name}</span>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs font-bold text-emerald-400 mono-font">${rec.score.toFixed(1)}%</div>
+                        <div class="text-[9px] text-slate-500 mono-font">${parseFloat(rec.avgPressure).toFixed(2)}N | ${Math.round(rec.avgBPM)}BPM</div>
+                    </div>
+                </div>`;
+            });
+            listContainer.innerHTML = html;
+        };
 
         function toggleHelp(show) {
             if (show) {
@@ -609,23 +554,18 @@
         const ctx = waveCanvas.getContext('2d');
         function resizeCanvas() {
             waveCanvas.width = waveCanvas.parentElement.clientWidth;
-            waveCanvas.height = waveCanvas.parentElement.clientHeight || 64;
+            waveCanvas.height = 64;
         }
         window.addEventListener('resize', resizeCanvas);
-        setTimeout(resizeCanvas, 100);
+        resizeCanvas();
 
-        let pointerDown = false;
-        tapArea.addEventListener('mousedown', (e) => { pointerDown = true; handleTouchStart(e); });
-        window.addEventListener('mouseup', () => { pointerDown = false; handleTouchEnd(); });
-        tapArea.addEventListener('touchstart', (e) => { e.preventDefault(); pointerDown = true; handleTouchStart(e.touches[0]); });
-        window.addEventListener('touchend', () => { pointerDown = false; handleTouchEnd(); });
-
-        function handleTouchStart(e) {
+        // 🌟 核心修復：使用滑鼠與觸控完全相容的事件觸發機制
+        function pressStart(clientX, clientY) {
             if (!isPlaying) startChallenge();
 
             const rect = tapArea.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
 
             rippleRing.style.left = `${x - 32}px`;
             rippleRing.style.top = `${y - 32}px`;
@@ -634,19 +574,25 @@
             mouseBody.classList.add('scale-95');
             fabricPlate.classList.add('bg-pink-500/40');
 
-            targetPressure = 0.25 + (Math.random() * 0.06); 
-            
-            const now = Date.now();
-            clickTimes.push(now);
+            targetPressure = 0.24 + (Math.random() * 0.07); 
+            clickTimes.push(Date.now());
             evaluateBPM();
         }
 
-        function handleTouchEnd() {
+        function pressEnd() {
             rippleRing.className = "absolute w-16 h-16 rounded-full border scale-50 opacity-0 pointer-events-none transition-all duration-300";
             mouseBody.classList.remove('scale-95');
             fabricPlate.classList.remove('bg-pink-500/40');
             targetPressure = 0; 
         }
+
+        // 電腦滑鼠監聽
+        tapArea.addEventListener('mousedown', (e) => { pointerDown = true; pressStart(e.clientX, e.clientY); });
+        window.addEventListener('mouseup', () => { if(pointerDown) { pointerDown = false; pressEnd(); } });
+        
+        // 手機觸控監聽
+        tapArea.addEventListener('touchstart', (e) => { e.preventDefault(); pointerDown = true; pressStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+        window.addEventListener('touchend', () => { if(pointerDown) { pointerDown = false; pressEnd(); } });
 
         function startChallenge() {
             if (isPlaying) return;
@@ -675,11 +621,9 @@
             const now = Date.now();
             elapsed = now - startTime;
             let remaining = (GAME_DURATION - elapsed) / 1000;
-            
             if (remaining <= 0) { remaining = 0; endChallenge(); }
             timerDisplay.textContent = `${remaining.toFixed(1)}s`;
 
-            // 【肌肉組織黏彈性延遲物理演算法】高頻率下衰減放慢，使壓力波形能維持在黃金範圍內
             const decaySpeed = (bpm > 85) ? 0.08 : 0.28; 
             const easing = pointerDown ? 0.28 : decaySpeed;
             pressure += (targetPressure - pressure) * easing;
@@ -699,23 +643,18 @@
             const bpmIdeal = (bpm >= 100 && bpm <= 120);
             if (pressureIdeal && bpmIdeal) perfectTicks++;
 
-            const consistencyScore = (perfectTicks / totalTicks) * 100;
-            scoreDisplay.textContent = `${consistencyScore.toFixed(1)}%`;
-
+            scoreDisplay.textContent = `${((perfectTicks / totalTicks) * 100).toFixed(1)}%`;
             animateBiochemicalCascades(pressureIdeal, bpmIdeal);
 
             if (pressure > 0.40) {
                 mouseSkin.setAttribute('fill', '#4a3250'); mouseHead.setAttribute('fill', '#4a3250');
-                ambientWarning.textContent = "⚠ 警告：力道過重！小鼠發紺窒息中！";
-                ambientWarning.className = "absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-rose-950/80 border border-rose-500/50 text-[10px] text-rose-300 font-bold pointer-events-none";
+                ambientWarning.textContent = "⚠ 警告：力道過重！小鼠發紺中！";
             } else {
                 mouseSkin.setAttribute('fill', '#475569'); mouseHead.setAttribute('fill', '#475569');
                 if (pressureIdeal && bpmIdeal) {
-                    ambientWarning.textContent = "🎯 優良！壓力和頻率均在標準標靶內！";
-                    ambientWarning.className = "absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-emerald-950/40 border border-emerald-500/50 text-[10px] text-emerald-400 font-bold pointer-events-none";
+                    ambientWarning.textContent = "🎯 優良！壓力和頻率均在黃金標靶內！";
                 } else if (isPlaying) {
                     ambientWarning.textContent = "維持雙指標在中央綠色標準區間...";
-                    ambientWarning.className = "absolute bottom-3 left-3 right-3 text-center px-2 py-1 rounded bg-slate-900/90 border border-slate-800 text-[10px] text-slate-400 pointer-events-none";
                 }
             }
         }
@@ -735,26 +674,22 @@
                 irsValue = Math.min(100, irsValue + 3);
                 if (irsValue > 40) pi3kValue = Math.min(100, pi3kValue + 3);
                 if (pi3kValue > 50) aktValue = Math.min(100, aktValue + 3);
-                if (aktValue > 60) glut4Value = Math.min(100, glut4Value + 3);
+                if (glut4Value > 60) glut4Value = Math.min(100, glut4Value + 3);
             } else {
                 irsValue = Math.max(0, irsValue - 0.4); pi3kValue = Math.max(0, pi3kValue - 0.4);
                 aktValue = Math.max(0, aktValue - 0.4); glut4Value = Math.max(0, glut4Value - 0.4);
             }
-
             updateBiochemicalBars(irsValue, pi3kValue, aktValue, glut4Value);
 
             if (glut4Value > 70) {
                 metabolicActivity.textContent = "糖脂代謝高度活化！";
-                metabolicActivity.className = "text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
                 glucoseStatusText.innerHTML = "<span class='text-emerald-400 font-bold'>大量攝取！</span>";
                 spawnGlucoseParticles(true);
             } else if (irsValue > 20) {
                 metabolicActivity.textContent = "通路激活中...";
-                metabolicActivity.className = "text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30";
                 glucoseStatusText.textContent = "通道開啟中";
             } else {
                 metabolicActivity.textContent = "靜止狀態";
-                metabolicActivity.className = "text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400";
                 glucoseStatusText.textContent = "等候標準干預";
             }
         }
@@ -784,14 +719,10 @@
             if (!isPlaying && pressure === 0) return;
             waveHistory.shift(); waveHistory.push(pressure);
             ctx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
-
             const yMax = waveCanvas.height - (0.3 / 0.5) * waveCanvas.height;
             const yMin = waveCanvas.height - (0.1 / 0.5) * waveCanvas.height;
-            ctx.fillStyle = 'rgba(16, 185, 129, 0.08)';
-            ctx.fillRect(0, yMax, waveCanvas.width, yMin - yMax);
-
-            ctx.strokeStyle = pressure > 0.40 ? '#f43f5e' : '#f97316';
-            ctx.lineWidth = 1.5; ctx.beginPath();
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.08)'; ctx.fillRect(0, yMax, waveCanvas.width, yMin - yMax);
+            ctx.strokeStyle = '#f97316'; ctx.lineWidth = 1.5; ctx.beginPath();
             const step = waveCanvas.width / (waveHistory.length - 1);
             for (let i = 0; i < waveHistory.length; i++) {
                 const y = waveCanvas.height - Math.min(waveHistory[i] / 0.5, 1.0) * waveCanvas.height;
@@ -807,11 +738,9 @@
             document.getElementById('avgPressureVal').textContent = `${(sumPressure / totalTicks).toFixed(2)}`;
             document.getElementById('avgBPMVal').textContent = `${Math.round(sumBpm / totalTicks)}`;
             document.getElementById('finalScoreVal').textContent = `${finalScore.toFixed(1)}%`;
-
             if (finalScore >= 80) document.getElementById('resultTitle').textContent = "🥇 首席方法學專家";
             else if (finalScore >= 55) document.getElementById('resultTitle').textContent = "🥈 實驗室手感流大師";
             else document.getElementById('resultTitle').textContent = "🥉 標準化實習助理";
-
             resultsScreen.classList.remove('translate-y-full');
         }
 
@@ -821,7 +750,11 @@
             setTimeout(() => { toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 pointer-events-none"; }, 3000);
         }
 
-        initFirebase();
+        // 預先載入預設排行榜
+        window.updateLeaderboardUI(window.localLeaderboard);
+        
+        // 彈出歡迎視窗
+        setTimeout(() => { toggleHelp(true); }, 400);
     </script>
 </body>
 </html>
