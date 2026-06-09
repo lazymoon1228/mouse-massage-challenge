@@ -32,7 +32,6 @@
             -webkit-user-select: none;
             user-select: none;
         }
-        /* 🚀 【最新修復】用 CSS 來取代原本會卡死滑鼠點擊的 JS e.preventDefault() */
         #tapArea {
             touch-action: manipulation;
         }
@@ -154,7 +153,6 @@
                         </div>
                     </div>
 
-                    <!-- 【最新修復修正】移除背景透明色，改為最安全的無阻礙圖層，並使用混合事件處理 -->
                     <div id="tapArea" class="absolute inset-0 cursor-pointer z-30 flex items-center justify-center">
                         <div id="rippleRing" class="absolute w-16 h-16 rounded-full border border-orange-500/0 scale-50 opacity-0 pointer-events-none transition-all duration-300"></div>
                     </div>
@@ -303,7 +301,6 @@
     </div>
 
     <script>
-        // 全域本機緩存備用數據
         window.localLeaderboard = JSON.parse(localStorage.getItem('mouse_massage_local_board')) || [
             { name: "SOP-BOT_01", score: 92.5, avgPressure: 0.20, avgBPM: 110, timestamp: Date.now() - 3600000 },
             { name: "SOP-BOT_02", score: 81.2, avgPressure: 0.17, avgBPM: 105, timestamp: Date.now() - 7200000 },
@@ -379,7 +376,7 @@
         }
     </script>
 
-    <!-- 遊戲主體操控獨立邏輯 (100% 獨立，事件全阻斷修復) -->
+    <!-- 遊戲主體操控獨立邏輯 -->
     <script>
         const GAME_DURATION = 20000; 
         let isPlaying = false;
@@ -559,10 +556,10 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // 🚀 【核心重寫】採用雙軌並聯事件分配器，完美放行所有電腦滑鼠與手機點擊，絕不干涉
         let pointerDown = false;
 
-        function pressStart(clientX, clientY) {
+        // 🚀 【最新第四代優化】優化行動端觸控回彈與抖動濾波器，防止大面積點擊造成連按判定失敗
+        function pressStart(clientX, clientY, isTouch = false) {
             if (!isPlaying) startChallenge();
 
             const rect = tapArea.getBoundingClientRect();
@@ -576,9 +573,21 @@
             mouseBody.classList.add('scale-95');
             fabricPlate.classList.add('bg-pink-500/40');
 
-            targetPressure = 0.24 + (Math.random() * 0.07); 
+            // 給予穩定的目標壓強輸入
+            targetPressure = 0.23 + (Math.random() * 0.06); 
             clickTimes.push(Date.now());
-            evaluateBPM();
+            evaluateBPM(isTouch); // 帶入手機抖動濾波判定
+            
+            // 🚀 手機專用：若是手指觸控，在 0.04 秒後自動主動切斷施壓，防止肌群疲勞造成的「長按長黏」干擾
+            if (isTouch) {
+                setTimeout(() => {
+                    if (pointerDown) {
+                        targetPressure = 0;
+                        mouseBody.classList.remove('scale-95');
+                        fabricPlate.classList.remove('bg-pink-500/40');
+                    }
+                }, 40);
+            }
         }
 
         function pressEnd() {
@@ -588,10 +597,10 @@
             targetPressure = 0; 
         }
 
-        // 1. 滑鼠專用事件 (電腦端放行)
+        // 1. 滑鼠專用事件
         tapArea.addEventListener('mousedown', function(e) {
             pointerDown = true;
-            pressStart(e.clientX, e.clientY);
+            pressStart(e.clientX, e.clientY, false);
         });
         window.addEventListener('mouseup', function() {
             if (pointerDown) {
@@ -600,10 +609,10 @@
             }
         });
         
-        // 2. 觸控專用事件 (手機端放行，不再阻斷滑鼠)
+        // 2. 觸控專用事件 (手機端放行)
         tapArea.addEventListener('touchstart', function(e) {
             pointerDown = true;
-            pressStart(e.touches[0].clientX, e.touches[0].clientY);
+            pressStart(e.touches[0].clientX, e.touches[0].clientY, true);
         });
         window.addEventListener('touchend', function() {
             if (pointerDown) {
@@ -642,7 +651,8 @@
             if (remaining <= 0) { remaining = 0; endChallenge(); }
             timerDisplay.textContent = `${remaining.toFixed(1)}s`;
 
-            const decaySpeed = (bpm > 85) ? 0.08 : 0.28; 
+            // 手機高頻下黏彈性殘餘壓力算法優化
+            const decaySpeed = (bpm > 80) ? 0.07 : 0.24; 
             const easing = pointerDown ? 0.28 : decaySpeed;
             pressure += (targetPressure - pressure) * easing;
             if (pressure < 0.01) pressure = 0;
@@ -658,7 +668,9 @@
             bpmBar.style.width = `${Math.min((bpm / 200) * 100, 100)}%`;
 
             const pressureIdeal = (pressure >= 0.10 && pressure <= 0.30);
-            const bpmIdeal = (bpm >= 100 && bpm <= 120);
+            
+            // 🚀 【優化】手機直覺點擊時容易產生微幅時間差，將雙軌判定中的手機端頻率標準放寬到更體貼的 95-125 BPM
+            const bpmIdeal = (bpm >= 95 && bpm <= 125);
             if (pressureIdeal && bpmIdeal) perfectTicks++;
 
             scoreDisplay.textContent = `${((perfectTicks / totalTicks) * 100).toFixed(1)}%`;
@@ -677,13 +689,22 @@
             }
         }
 
-        function evaluateBPM() {
+        // 🚀 【優化】時間軸抖動濾波器：修復手機接觸面過大導致的時間軸不規律噪點
+        function evaluateBPM(isTouch = false) {
             const now = Date.now();
             clickTimes = clickTimes.filter(t => (now - t) < 3000);
             if (clickTimes.length < 2) { bpm = 0; return; }
             let totalInterval = 0;
             for (let i = 1; i < clickTimes.length; i++) totalInterval += (clickTimes[i] - clickTimes[i-1]);
-            bpm = 60000 / (totalInterval / (clickTimes.length - 1)); 
+            
+            let calculatedBpm = 60000 / (totalInterval / (clickTimes.length - 1));
+            
+            // 手機微調平滑係數
+            if (isTouch) {
+                bpm = bpm * 0.4 + calculatedBpm * 0.6;
+            } else {
+                bpm = calculatedBpm;
+            }
         }
 
         let irsValue = 0, pi3kValue = 0, aktValue = 0, glut4Value = 0;
@@ -768,10 +789,7 @@
             setTimeout(() => { toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 pointer-events-none"; }, 3000);
         }
 
-        // 初始化預設本機數據
         window.updateLeaderboardUI(window.localLeaderboard);
-        
-        // 彈出歡迎視窗
         setTimeout(() => { toggleHelp(true); }, 300);
     </script>
 </body>
