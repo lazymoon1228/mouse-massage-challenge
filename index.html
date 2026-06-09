@@ -746,17 +746,57 @@
             requestAnimationFrame(drawWave);
         }
 
-        function endChallenge() {
-            clearInterval(gameTimer); isPlaying = false; pointerDown = false; targetPressure = 0;
-            const finalScore = (perfectTicks / totalTicks) * 100;
-            document.getElementById('avgPressureVal').textContent = `${(sumPressure / totalTicks).toFixed(2)}`;
-            document.getElementById('avgBPMVal').textContent = `${Math.round(sumBpm / totalTicks)}`;
-            document.getElementById('finalScoreVal').textContent = `${finalScore.toFixed(1)}%`;
-            if (finalScore >= 80) document.getElementById('resultTitle').textContent = "🥇 首席方法學專家";
-            else if (finalScore >= 55) document.getElementById('resultTitle').textContent = "🥈 實驗室手感流大師";
-            else document.getElementById('resultTitle').textContent = "🥉 標準化實習助理";
-            resultsScreen.classList.remove('translate-y-full');
-        }
+function endChallenge() {
+clearInterval(gameTimer);
+isPlaying = false;
+pointerDown = false;
+targetPressure = 0;
+
+```
+// 防止 totalTicks 為 0 導致 NaN
+const finalScore = totalTicks > 0
+    ? (perfectTicks / totalTicks) * 100
+    : 0;
+
+const avgPressure = totalTicks > 0
+    ? (sumPressure / totalTicks)
+    : 0;
+
+const avgBPM = totalTicks > 0
+    ? (sumBpm / totalTicks)
+    : 0;
+
+document.getElementById('avgPressureVal').textContent =
+    `${avgPressure.toFixed(2)}`;
+
+document.getElementById('avgBPMVal').textContent =
+    `${Math.round(avgBPM)}`;
+
+document.getElementById('finalScoreVal').textContent =
+    `${finalScore.toFixed(1)}%`;
+
+// 分級稱號
+if (finalScore >= 90) {
+    document.getElementById('resultTitle').textContent =
+        "🥇 首席方法學專家";
+
+} else if (finalScore >= 70) {
+    document.getElementById('resultTitle').textContent =
+        "🥈 實驗室手感流大師";
+
+} else if (finalScore >= 51) {
+    document.getElementById('resultTitle').textContent =
+        "🥉 標準化實習助理";
+
+} else {
+    document.getElementById('resultTitle').textContent =
+        "🐭 按摩鼠鼠觀察員";
+}
+
+resultsScreen.classList.remove('translate-y-full');
+```
+
+}
 
         function showToast(message, type = 'info') {
             toastText.textContent = message;
