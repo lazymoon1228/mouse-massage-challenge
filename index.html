@@ -32,9 +32,6 @@
             -webkit-user-select: none;
             user-select: none;
         }
-        #tapArea {
-            touch-action: manipulation;
-        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-orange-500 selection:text-white no-select">
@@ -153,8 +150,9 @@
                         </div>
                     </div>
 
-                    <div id="tapArea" class="absolute inset-0 cursor-pointer z-30 flex items-center justify-center">
-                        <div id="rippleRing" class="absolute w-16 h-16 rounded-full border border-orange-500/0 scale-50 opacity-0 pointer-events-none transition-all duration-300"></div>
+                    <!-- 【優化】核心觸控與滑鼠感應層 -->
+                    <div id="tapArea" class="absolute inset-0 cursor-pointer z-30 flex items-center justify-center bg-transparent">
+                        <div id="rippleRing" class="absolute w-16 h-16 rounded-full border border-orange-500/0 scale-50 opacity-0 pointer-events-none"></div>
                     </div>
 
                     <!-- Alert Banner -->
@@ -219,10 +217,10 @@
         <section class="lg:col-span-5 flex flex-col gap-4">
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl flex flex-col gap-3 flex-1">
                 <div class="flex border-b border-slate-800 text-xs">
-                    <button id="tabMechanismBtn" class="flex-1 pb-2.5 font-bold text-orange-400 border-b-2 border-orange-500 transition-all focus:outline-none">
+                    <button id="tabMechanismBtn" class="flex-1 pb-2.5 font-bold text-orange-400 border-b-2 border-orange-500 focus:outline-none">
                         <i class="fa-solid fa-dna mr-1"></i>分子機制
                     </button>
-                    <button id="tabLeaderboardBtn" class="flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 transition-all focus:outline-none">
+                    <button id="tabLeaderboardBtn" class="flex-1 pb-2.5 font-bold text-slate-400 border-b-2 border-transparent hover:text-slate-200 focus:outline-none">
                         <i class="fa-solid fa-trophy mr-1"></i>實驗室排行榜
                     </button>
                 </div>
@@ -300,17 +298,20 @@
         <i id="toastIcon" class="fa-solid"></i><span id="toastText"></span>
     </div>
 
+    <!-- 🌟 將前端操控腳本與雲端腳本完全隔離獨立，防止加載崩潰 🌟 -->
     <script>
+        // 全域核心狀態（優先讓本機玩）
         window.localLeaderboard = JSON.parse(localStorage.getItem('mouse_massage_local_board')) || [
             { name: "SOP-BOT_01", score: 92.5, avgPressure: 0.20, avgBPM: 110, timestamp: Date.now() - 3600000 },
             { name: "SOP-BOT_02", score: 81.2, avgPressure: 0.17, avgBPM: 105, timestamp: Date.now() - 7200000 },
             { name: "助理阿明", score: 65.4, avgPressure: 0.14, avgBPM: 98, timestamp: Date.now() - 10800000 }
         ];
+        
         window.cloudSubmitHandler = null; 
         window.cloudFetchHandler = null;
     </script>
 
-    <!-- Firebase 加載完全隔離沙盒 -->
+    <!-- Firebase 加載隔離沙盒 (Try-Catch) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -325,6 +326,19 @@
             appId: "1:200662761238:web:78047d84a58095bfe0da37"
         };
 
+        // 若 Firebase 驗證或 Firestore 權限延遲/失敗，3 秒後自動顯示本機模式，不影響遊戲本體。
+        const firebaseFallbackTimer = setTimeout(() => {
+            if (!window.cloudFetchHandler || !window.cloudSubmitHandler) {
+                const syncStatus = document.getElementById('syncStatus');
+                if(syncStatus) {
+                    syncStatus.innerHTML = '<i class="fa-solid fa-cloud-slash text-amber-500"></i>本機暫存模式';
+                    syncStatus.className = "text-[9px] text-amber-500 flex items-center gap-1";
+                }
+                if(window.updateLeaderboardUI) window.updateLeaderboardUI(window.localLeaderboard);
+            }
+        }, 3000);
+
+        // 🌟 核心防禦：完全包裹在 try 中，就算失敗也絕對不會卡死本機操作 🌟
         try {
             const app = initializeApp(myFirebaseConfig);
             const auth = getAuth(app);
@@ -333,12 +347,14 @@
             signInAnonymously(auth).then(() => {
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
+                        clearTimeout(firebaseFallbackTimer);
                         const syncStatus = document.getElementById('syncStatus');
                         if(syncStatus) {
                             syncStatus.innerHTML = '<i class="fa-solid fa-cloud text-emerald-400"></i>已即時雲端同步';
                             syncStatus.className = "text-[9px] text-emerald-400 flex items-center gap-1";
                         }
                         
+                        // 註冊全域資料庫處理函式
                         window.cloudFetchHandler = async function() {
                             const leaderboardCol = collection(db, 'artifacts', 'mouse-massage-sim', 'public', 'data', 'leaderboard');
                             const snapshot = await getDocs(leaderboardCol);
@@ -353,18 +369,18 @@
                             await addDoc(leaderboardCol, record);
                         };
 
+                        // 首次載入雲端數據
                         window.cloudFetchHandler().then(list => {
                             if(window.updateLeaderboardUI) window.updateLeaderboardUI(list);
                         }).catch(e => console.error("雲端讀取失敗:", e));
                     }
                 });
-            }).catch(e => { console.warn("Firebase 匿名驗證失效"); fallbackActive(); });
+            }).catch(e => {
+                throw new Error("匿名驗證遭拒絕");
+            });
 
         } catch (err) {
-            fallbackActive();
-        }
-
-        function fallbackActive() {
+            console.warn("[Firebase 沙盒隔離安全防護啟動] 轉為本機完全解鎖模式:", err);
             setTimeout(() => {
                 const syncStatus = document.getElementById('syncStatus');
                 if(syncStatus) {
@@ -372,11 +388,11 @@
                     syncStatus.className = "text-[9px] text-amber-500 flex items-center gap-1";
                 }
                 if(window.updateLeaderboardUI) window.updateLeaderboardUI(window.localLeaderboard);
-            }, 400);
+            }, 500);
         }
     </script>
 
-    <!-- 遊戲主體操控獨立邏輯 -->
+    <!-- 遊戲主體操控指令碼 (100% 獨立運行，滑鼠點擊絕對不卡死) -->
     <script>
         const GAME_DURATION = 20000; 
         let isPlaying = false;
@@ -386,6 +402,7 @@
         
         let pressure = 0;
         let targetPressure = 0;
+        let pointerDown = false;
         let clickTimes = [];
         let bpm = 0;
         let perfectTicks = 0;
@@ -556,10 +573,8 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        let pointerDown = false;
-
-        // 🚀 【最新第四代優化】優化行動端觸控回彈與抖動濾波器，防止大面積點擊造成連按判定失敗
-        function pressStart(clientX, clientY, isTouch = false) {
+        // 🌟 核心修復：使用滑鼠與觸控完全相容的事件觸發機制
+        function pressStart(clientX, clientY) {
             if (!isPlaying) startChallenge();
 
             const rect = tapArea.getBoundingClientRect();
@@ -573,21 +588,9 @@
             mouseBody.classList.add('scale-95');
             fabricPlate.classList.add('bg-pink-500/40');
 
-            // 給予穩定的目標壓強輸入
-            targetPressure = 0.23 + (Math.random() * 0.06); 
+            targetPressure = 0.24 + (Math.random() * 0.07); 
             clickTimes.push(Date.now());
-            evaluateBPM(isTouch); // 帶入手機抖動濾波判定
-            
-            // 🚀 手機專用：若是手指觸控，在 0.04 秒後自動主動切斷施壓，防止肌群疲勞造成的「長按長黏」干擾
-            if (isTouch) {
-                setTimeout(() => {
-                    if (pointerDown) {
-                        targetPressure = 0;
-                        mouseBody.classList.remove('scale-95');
-                        fabricPlate.classList.remove('bg-pink-500/40');
-                    }
-                }, 40);
-            }
+            evaluateBPM();
         }
 
         function pressEnd() {
@@ -597,29 +600,13 @@
             targetPressure = 0; 
         }
 
-        // 1. 滑鼠專用事件
-        tapArea.addEventListener('mousedown', function(e) {
-            pointerDown = true;
-            pressStart(e.clientX, e.clientY, false);
-        });
-        window.addEventListener('mouseup', function() {
-            if (pointerDown) {
-                pointerDown = false;
-                pressEnd();
-            }
-        });
+        // 電腦滑鼠監聽
+        tapArea.addEventListener('mousedown', (e) => { pointerDown = true; pressStart(e.clientX, e.clientY); });
+        window.addEventListener('mouseup', () => { if(pointerDown) { pointerDown = false; pressEnd(); } });
         
-        // 2. 觸控專用事件 (手機端放行)
-        tapArea.addEventListener('touchstart', function(e) {
-            pointerDown = true;
-            pressStart(e.touches[0].clientX, e.touches[0].clientY, true);
-        });
-        window.addEventListener('touchend', function() {
-            if (pointerDown) {
-                pointerDown = false;
-                pressEnd();
-            }
-        });
+        // 手機觸控監聽
+        tapArea.addEventListener('touchstart', (e) => { e.preventDefault(); pointerDown = true; pressStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+        window.addEventListener('touchend', () => { if(pointerDown) { pointerDown = false; pressEnd(); } });
 
         function startChallenge() {
             if (isPlaying) return;
@@ -651,8 +638,7 @@
             if (remaining <= 0) { remaining = 0; endChallenge(); }
             timerDisplay.textContent = `${remaining.toFixed(1)}s`;
 
-            // 手機高頻下黏彈性殘餘壓力算法優化
-            const decaySpeed = (bpm > 80) ? 0.07 : 0.24; 
+            const decaySpeed = (bpm > 85) ? 0.08 : 0.28; 
             const easing = pointerDown ? 0.28 : decaySpeed;
             pressure += (targetPressure - pressure) * easing;
             if (pressure < 0.01) pressure = 0;
@@ -668,9 +654,7 @@
             bpmBar.style.width = `${Math.min((bpm / 200) * 100, 100)}%`;
 
             const pressureIdeal = (pressure >= 0.10 && pressure <= 0.30);
-            
-            // 🚀 【優化】手機直覺點擊時容易產生微幅時間差，將雙軌判定中的手機端頻率標準放寬到更體貼的 95-125 BPM
-            const bpmIdeal = (bpm >= 95 && bpm <= 125);
+            const bpmIdeal = (bpm >= 100 && bpm <= 120);
             if (pressureIdeal && bpmIdeal) perfectTicks++;
 
             scoreDisplay.textContent = `${((perfectTicks / totalTicks) * 100).toFixed(1)}%`;
@@ -689,22 +673,13 @@
             }
         }
 
-        // 🚀 【優化】時間軸抖動濾波器：修復手機接觸面過大導致的時間軸不規律噪點
-        function evaluateBPM(isTouch = false) {
+        function evaluateBPM() {
             const now = Date.now();
             clickTimes = clickTimes.filter(t => (now - t) < 3000);
             if (clickTimes.length < 2) { bpm = 0; return; }
             let totalInterval = 0;
             for (let i = 1; i < clickTimes.length; i++) totalInterval += (clickTimes[i] - clickTimes[i-1]);
-            
-            let calculatedBpm = 60000 / (totalInterval / (clickTimes.length - 1));
-            
-            // 手機微調平滑係數
-            if (isTouch) {
-                bpm = bpm * 0.4 + calculatedBpm * 0.6;
-            } else {
-                bpm = calculatedBpm;
-            }
+            bpm = 60000 / (totalInterval / (clickTimes.length - 1)); 
         }
 
         let irsValue = 0, pi3kValue = 0, aktValue = 0, glut4Value = 0;
@@ -713,7 +688,7 @@
                 irsValue = Math.min(100, irsValue + 3);
                 if (irsValue > 40) pi3kValue = Math.min(100, pi3kValue + 3);
                 if (pi3kValue > 50) aktValue = Math.min(100, aktValue + 3);
-                if (pi3kValue > 60) glut4Value = Math.min(100, glut4Value + 3);
+                if (aktValue > 60) glut4Value = Math.min(100, glut4Value + 3);
             } else {
                 irsValue = Math.max(0, irsValue - 0.4); pi3kValue = Math.max(0, pi3kValue - 0.4);
                 aktValue = Math.max(0, aktValue - 0.4); glut4Value = Math.max(0, glut4Value - 0.4);
@@ -789,8 +764,11 @@
             setTimeout(() => { toast.className = "fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 pointer-events-none"; }, 3000);
         }
 
+        // 預先載入預設排行榜
         window.updateLeaderboardUI(window.localLeaderboard);
-        setTimeout(() => { toggleHelp(true); }, 300);
+        
+        // 彈出歡迎視窗
+        setTimeout(() => { toggleHelp(true); }, 400);
     </script>
 </body>
 </html>
